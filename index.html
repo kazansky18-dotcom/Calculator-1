@@ -237,66 +237,73 @@
         </div>
       </div>
 
-      <!-- 2) ppm <-> mg/Nm3 -->
-      <div class="card">
-        <h2>가스 농도 환산 <span class="badge">ppm ↔ mg/Nm³</span></h2>
+    <!-- 2) ppm <-> mg/Nm3 (EASY) -->
+<div class="card">
+  <h2>가스 농도 환산 <span class="badge">초보모드</span></h2>
+  <div class="hint">1) 가스 선택 → 2) 변환 방향 선택 → 3) 값 입력하면 끝</div>
 
-        <div class="row cols2">
-          <div>
-            <label>분자량 MW (g/mol)</label>
-            <input id="mw" type="number" step="any" value="64.066">
-            <div class="hint">예: SO₂ 64.066 / NO₂ 46.0055 / CO 28.01 / CO₂ 44.0095</div>
-          </div>
-          <div>
-            <label>기준조건 선택</label>
-            <select id="stpMode">
-              <option value="0C" selected>0℃, 1atm (Nm³)</option>
-              <option value="20C">20℃, 1atm (참고)</option>
-              <option value="25C">25℃, 1atm (참고)</option>
-            </select>
-            <div class="hint">기체 몰부피가 달라져 변환 계수가 달라집니다.</div>
-          </div>
-        </div>
+  <div class="row cols3" style="margin-top:10px">
+    <div>
+      <label>가스 선택</label>
+      <select id="gasPick">
+        <option value="SO2" selected>SO₂</option>
+        <option value="NO2">NO₂</option>
+        <option value="NO">NO</option>
+        <option value="CO">CO</option>
+        <option value="CO2">CO₂</option>
+        <option value="O2">O₂</option>
+        <option value="NH3">NH₃</option>
+        <option value="H2S">H₂S</option>
+        <option value="CH4">CH₄</option>
+        <option value="custom">직접입력</option>
+      </select>
+    </div>
 
-        <div class="row cols2" style="margin-top:10px">
-          <div>
-            <label>입력 ppm</label>
-            <input id="ppmIn" type="number" step="any" value="100">
-          </div>
-          <div>
-            <label>입력 mg/Nm³</label>
-            <input id="mgNm3In" type="number" step="any" placeholder="예: 285.8">
-            <div class="hint">둘 중 하나만 입력해도 반대값 자동 계산됩니다.</div>
-          </div>
-        </div>
+    <div>
+      <label>분자량 MW (자동)</label>
+      <input id="mw" type="number" step="any" value="64.066" />
+      <div class="hint">직접입력 선택 시 수정 가능</div>
+    </div>
 
-        <div class="row cols2" style="margin-top:10px">
-          <div>
-            <label>ppm → mg/Nm³</label>
-            <div class="out" id="ppmToMg">-</div>
-          </div>
-          <div>
-            <label>mg/Nm³ → ppm</label>
-            <div class="out" id="mgToPpm">-</div>
-          </div>
-        </div>
+    <div>
+      <label>기준조건</label>
+      <select id="stpMode">
+        <option value="0C" selected>0℃, 1atm (Nm³)</option>
+        <option value="20C">20℃, 1atm</option>
+        <option value="25C">25℃, 1atm</option>
+      </select>
+    </div>
+  </div>
 
-        <div class="warn" id="mwWarn"></div>
+  <div class="row cols2" style="margin-top:10px">
+    <div>
+      <label>변환 방향</label>
+      <select id="dir">
+        <option value="ppm2mg" selected>ppm → mg/Nm³</option>
+        <option value="mg2ppm">mg/Nm³ → ppm</option>
+      </select>
+      <div class="hint">한 방향만 입력하도록 해서 헷갈림을 줄였습니다.</div>
+    </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>가스</th><th>MW</th><th>1 ppm → mg/Nm³ (0℃ 기준)</th>
-            </tr>
-          </thead>
-          <tbody id="mwTable"></tbody>
-        </table>
+    <div>
+      <label>입력값</label>
+      <input id="valIn" type="number" step="any" value="100" />
+      <div class="hint" id="valHint">ppm 값을 입력하세요.</div>
+    </div>
+  </div>
 
-        <div class="hint">
-          공식(이상기체): <span class="mono">mg/m³ = ppm × MW / Vm</span> (Vm: 몰부피 L/mol).
-          0℃ 기준 Vm=22.414.
-        </div>
+  <div class="row cols1" style="margin-top:10px">
+    <div>
+      <label>결과</label>
+      <div class="out" id="easyOut" style="font-size:18px;padding:14px;border-style:solid;border-color:rgba(8,96,168,.25);">
+        -
       </div>
+      <div class="hint mono" id="easyFormula">-</div>
+    </div>
+  </div>
+
+  <div class="warn" id="mwWarn"></div>
+</div>
 
       <!-- 3) Flow unit conversion -->
       <div class="card">
@@ -436,82 +443,82 @@
   }
 
   // ---------- 2) ppm <-> mg/Nm3 ----------
-  // Molar volume (L/mol) approx
-  const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 };
+// ---------- 2) Gas conversion EASY ----------
+const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 };
 
-  const GAS_LIST = [
-    {name:"SO₂", mw:64.066},
-    {name:"NO₂", mw:46.0055},
-    {name:"NO",  mw:30.006},
-    {name:"CO",  mw:28.01},
-    {name:"CO₂", mw:44.0095},
-    {name:"O₂",  mw:31.998},
-    {name:"NH₃", mw:17.031},
-    {name:"H₂S", mw:34.081},
-    {name:"CH₄", mw:16.043},
-  ];
+const GAS_DB = {
+  SO2:{label:"SO₂", mw:64.066},
+  NO2:{label:"NO₂", mw:46.0055},
+  NO:{label:"NO", mw:30.006},
+  CO:{label:"CO", mw:28.01},
+  CO2:{label:"CO₂", mw:44.0095},
+  O2:{label:"O₂", mw:31.998},
+  NH3:{label:"NH₃", mw:17.031},
+  H2S:{label:"H₂S", mw:34.081},
+  CH4:{label:"CH₄", mw:16.043},
+};
 
-  function ppm_to_mg(ppm, MW, mode){
-    const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
-    return ppm * MW / Vm;
+function ppm_to_mg(ppm, MW, mode){
+  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+  return ppm * MW / Vm;
+}
+function mg_to_ppm(mg, MW, mode){
+  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+  return mg * Vm / MW;
+}
+
+function setGasMW(){
+  const pick = $("gasPick").value;
+  if(pick !== "custom"){
+    $("mw").value = GAS_DB[pick].mw;
+    $("mw").disabled = true;
+  } else {
+    $("mw").disabled = false;
   }
-  function mg_to_ppm(mg, MW, mode){
-    const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
-    return mg * Vm / MW;
+  recalcGasEasy();
+}
+
+function setDirHint(){
+  const dir = $("dir").value;
+  $("valHint").textContent = (dir === "ppm2mg")
+    ? "ppm 값을 입력하세요."
+    : "mg/Nm³ 값을 입력하세요.";
+  recalcGasEasy();
+}
+
+function recalcGasEasy(){
+  const MW = num($("mw").value);
+  const mode = $("stpMode").value;
+  const dir = $("dir").value;
+  const v = num($("valIn").value);
+  const warn = $("mwWarn");
+  warn.style.display = "none";
+
+  if(!isNum(MW) || MW <= 0){
+    warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
+    warn.style.display = "block";
+    $("easyOut").textContent = "-";
+    $("easyFormula").textContent = "-";
+    return;
+  }
+  if(!isNum(v)){
+    $("easyOut").textContent = "-";
+    $("easyFormula").textContent = "-";
+    return;
   }
 
-  function renderMwTable(){
-    const tbody = $("mwTable");
-    tbody.innerHTML = GAS_LIST.map(g => {
-      const v = ppm_to_mg(1, g.mw, "0C");
-      return `<tr><td>${g.name}</td><td>${fmt(g.mw,4)}</td><td>${fmt(v,6)}</td></tr>`;
-    }).join("");
+  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+
+  if(dir === "ppm2mg"){
+    const out = ppm_to_mg(v, MW, mode);
+    $("easyOut").textContent = `${fmt(out)} mg/Nm³`;
+    $("easyFormula").textContent = `mg/Nm³ = ppm × MW / Vm = ${fmt(v)} × ${fmt(MW,4)} / ${fmt(Vm,3)}`;
+  } else {
+    const out = mg_to_ppm(v, MW, mode);
+    $("easyOut").textContent = `${fmt(out)} ppm`;
+    $("easyFormula").textContent = `ppm = mg/Nm³ × Vm / MW = ${fmt(v)} × ${fmt(Vm,3)} / ${fmt(MW,4)}`;
   }
-
-  function recalcGas(from){
-    const MW = num($("mw").value);
-    const mode = $("stpMode").value;
-    const warn = $("mwWarn");
-    warn.style.display = "none";
-
-    if (!isNum(MW) || MW <= 0){
-      warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
-      warn.style.display = "block";
-      $("ppmToMg").textContent = "-";
-      $("mgToPpm").textContent = "-";
-      return;
-    }
-
-    const ppmV = num($("ppmIn").value);
-    const mgV  = num($("mgNm3In").value);
-
-    if (from === "ppm" && isNum(ppmV)){
-      const mgOut = ppm_to_mg(ppmV, MW, mode);
-      $("ppmToMg").textContent = `${fmt(mgOut)} mg/Nm³`;
-      $("mgToPpm").textContent = `${fmt(ppmV)} ppm`;
-      // reflect to other input without fighting typing
-      if (document.activeElement?.id !== "mgNm3In") $("mgNm3In").value = isNum(mgOut) ? mgOut : "";
-    } else if (from === "mg" && isNum(mgV)){
-      const ppmOut = mg_to_ppm(mgV, MW, mode);
-      $("mgToPpm").textContent = `${fmt(ppmOut)} ppm`;
-      $("ppmToMg").textContent = `${fmt(mgV)} mg/Nm³`;
-      if (document.activeElement?.id !== "ppmIn") $("ppmIn").value = isNum(ppmOut) ? ppmOut : "";
-    } else {
-      // fallback
-      if (isNum(ppmV)){
-        const mgOut = ppm_to_mg(ppmV, MW, mode);
-        $("ppmToMg").textContent = `${fmt(mgOut)} mg/Nm³`;
-        $("mgToPpm").textContent = `${fmt(ppmV)} ppm`;
-      } else if (isNum(mgV)){
-        const ppmOut = mg_to_ppm(mgV, MW, mode);
-        $("mgToPpm").textContent = `${fmt(ppmOut)} ppm`;
-        $("ppmToMg").textContent = `${fmt(mgV)} mg/Nm³`;
-      } else {
-        $("ppmToMg").textContent = "-";
-        $("mgToPpm").textContent = "-";
-      }
-    }
-  }
+}
 
   // ---------- 3) flow unit conversion ----------
   const K = 16.6666666667; // 1 m3/h = 16.6667 L/min
@@ -613,7 +620,11 @@
   $("stpMode").addEventListener("change", () => recalcGas());
   $("ppmIn").addEventListener("input", () => recalcGas("ppm"));
   $("mgNm3In").addEventListener("input", () => recalcGas("mg"));
-
+  $("gasPick").addEventListener("change", setGasMW);
+  $("dir").addEventListener("change", setDirHint);
+  $("mw").addEventListener("input", recalcGasEasy);
+  $("stpMode").addEventListener("change", recalcGasEasy);
+  $("valIn").addEventListener("input", recalcGasEasy);
   $("flowIn").addEventListener("input", recalcFlow);
   $("flowUnit").addEventListener("change", recalcFlow);
 
@@ -626,6 +637,9 @@
   $("btnCopyLink").addEventListener("click", copyLink);
 
   // init
+  setGasMW();
+  setDirHint();
+  recalcGasEasy();
   renderMwTable();
   recalcAll();
 })();
