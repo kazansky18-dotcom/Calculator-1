@@ -3,14 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="이앤인스트루먼트 단위환산 계산기 (가스 농도/질량농도/유량/Nm3 환산)" />
+  <meta name="description" content="이앤인스트루먼트 단위환산 계산기 (질량농도 / DustTrack 팩터 / 가스농도 / 유량 / Actual-Normal)" />
   <title>이앤인스트루먼트 | 단위환산 계산기</title>
 
   <style>
     :root{
-      /* E&Instrument tone (from logo) */
-      --primary:#0860A8;   /* blue */
-      --primary-2:#0B74C8; /* brighter blue */
+      --primary:#0860A8;
+      --primary-2:#0B74C8;
       --ink:#222;
       --muted:#667085;
       --line:#E6E8EC;
@@ -30,7 +29,7 @@
                   var(--bg);
     }
     a{color:var(--primary); text-decoration:none}
-    .wrap{max-width:1040px; margin:0 auto; padding:22px 16px 48px;}
+    .wrap{max-width:1120px; margin:0 auto; padding:22px 16px 48px;}
     .topbar{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px; padding:14px 16px; background:rgba(255,255,255,.75);
@@ -38,29 +37,25 @@
       box-shadow: var(--shadow);
       backdrop-filter: blur(8px);
     }
-    .brand{
-      display:flex; align-items:center; gap:12px; min-width:0;
-    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:0;}
     .logoBox{
       width:44px; height:44px; border-radius:12px;
       background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      display:grid; place-items:center; color:#fff; font-weight:800;
+      display:grid; place-items:center; color:#fff; font-weight:900;
       box-shadow: 0 8px 16px rgba(8,96,168,.25);
       flex:0 0 auto;
     }
     .brandText{min-width:0}
-    .brandText .name{font-weight:800; font-size:14px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .brandText .name{font-weight:900; font-size:14px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
     .brandText .sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-    .actions{
-      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
-    }
+    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
     .btn{
       border:1px solid var(--line);
       background:#fff;
       padding:9px 12px;
       border-radius:12px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
       font-size:13px;
     }
     .btn.primary{
@@ -68,6 +63,7 @@
       background: linear-gradient(135deg, rgba(8,96,168,.12), rgba(11,116,200,.10));
       color: var(--primary);
     }
+
     .hero{
       margin-top:14px;
       padding:18px 16px;
@@ -82,7 +78,7 @@
     .chip{
       background:var(--chip); border:1px solid rgba(8,96,168,.18);
       color:var(--primary); padding:7px 10px; border-radius:999px;
-      font-size:12px; font-weight:700;
+      font-size:12px; font-weight:900;
     }
 
     .grid{
@@ -91,10 +87,11 @@
       grid-template-columns: 1fr;
       gap:12px;
     }
-    @media (min-width: 920px){
+    @media (min-width: 960px){
       .grid{ grid-template-columns: 1fr 1fr; }
       .span2{ grid-column: 1 / -1; }
     }
+
     .card{
       background:var(--card);
       border:1px solid var(--line);
@@ -110,13 +107,14 @@
       gap:8px;
     }
     .badge{
-      font-size:11px; font-weight:800;
+      font-size:11px; font-weight:900;
       color:var(--primary);
       background:rgba(8,96,168,.10);
       border:1px solid rgba(8,96,168,.18);
       padding:4px 8px;
       border-radius:999px;
     }
+
     .row{
       display:grid;
       grid-template-columns: 1fr;
@@ -127,7 +125,8 @@
       .row.cols3{grid-template-columns: 1fr 1fr 1fr;}
       .row.cols4{grid-template-columns: 1fr 1fr 1fr 1fr;}
     }
-    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:700;}
+
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:900;}
     input, select{
       width:100%;
       padding:10px 11px;
@@ -146,27 +145,34 @@
       border:1px dashed rgba(102,112,133,.55);
       border-radius:12px;
       background:linear-gradient(180deg, #fff, #fbfcfe);
-      font-weight:800;
+      font-weight:900;
       color:#111;
       overflow:auto;
       white-space:nowrap;
     }
+    .out.big{
+      font-size:18px;
+      padding:14px;
+      border-style:solid;
+      border-color:rgba(8,96,168,.25);
+    }
     .hint{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.55;}
     .warn{
-      margin-top:8px; font-size:12px; font-weight:800;
+      margin-top:8px; font-size:12px; font-weight:900;
       color:#B42318; background:#FEF3F2; border:1px solid #FEE4E2;
       padding:10px 11px; border-radius:12px;
       display:none;
     }
-    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:12px;}
-    th,td{border:1px solid var(--line); padding:8px; text-align:center;}
-    th{background:#F8FAFC; color:#344054; font-weight:900;}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+    .divider{
+      height:1px; background:var(--line); margin:12px 0;
+    }
+
     .foot{
       margin-top:14px; font-size:12px; color:var(--muted);
       padding:14px 16px; border:1px solid var(--line);
       border-radius:var(--radius); background:rgba(255,255,255,.65);
     }
-    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
   </style>
 </head>
 
@@ -189,29 +195,32 @@
     <div class="hero">
       <h1>단위환산 계산기</h1>
       <p class="lead">
-        가스 농도(ppm↔mg/Nm³), 질량농도(mg↔g↔µg), 유량(m³/h↔L/min↔Nm³/h), 그리고 운전조건(P,T) 기반
-        Actual↔Normal 환산을 한 페이지에서 처리합니다.
+        요청하신 순서대로 배치했습니다:
+        1) 질량농도환산 → 2) DustTrack 중량 팩터 계산기 → 3) 가스농도(Volume %, mg/m³, ppm) →
+        4) 유량단위환산 → 5) Actual↔Normal(P,T)
       </p>
       <div class="chips">
-        <div class="chip">ppm ↔ mg/Nm³</div>
-        <div class="chip">mg/m³ ↔ g/m³ ↔ µg/m³</div>
-        <div class="chip">m³/h ↔ L/min</div>
-        <div class="chip">Actual ↔ Nm³/h (P,T)</div>
+        <div class="chip">1. 질량농도</div>
+        <div class="chip">2. DustTrack Factor</div>
+        <div class="chip">3. Gas: vol% / ppm / mg/m³</div>
+        <div class="chip">4. Flow</div>
+        <div class="chip">5. Actual↔Normal</div>
       </div>
     </div>
 
     <div class="grid">
+
       <!-- 1) Mass concentration -->
       <div class="card">
-        <h2>질량농도 환산 <span class="badge">mg/m³ ↔ g/m³ ↔ µg/m³</span></h2>
+        <h2>1. 질량농도 환산 <span class="badge">mg/m³ ↔ g/m³ ↔ µg/m³</span></h2>
         <div class="row cols2">
           <div>
             <label>입력값</label>
-            <input id="massIn" type="number" step="any" value="100">
+            <input id="m_in" type="number" step="any" value="100">
           </div>
           <div>
             <label>입력 단위</label>
-            <select id="massUnit">
+            <select id="m_unit">
               <option value="ug">µg/m³</option>
               <option value="mg" selected>mg/m³</option>
               <option value="g">g/m³</option>
@@ -221,101 +230,176 @@
         <div class="row cols3" style="margin-top:10px">
           <div>
             <label>결과 (µg/m³)</label>
-            <div class="out" id="massOutUg">-</div>
+            <div class="out" id="m_out_ug">-</div>
           </div>
           <div>
             <label>결과 (mg/m³)</label>
-            <div class="out" id="massOutMg">-</div>
+            <div class="out" id="m_out_mg">-</div>
           </div>
           <div>
             <label>결과 (g/m³)</label>
-            <div class="out" id="massOutG">-</div>
+            <div class="out" id="m_out_g">-</div>
           </div>
         </div>
+        <div class="hint">빠른 확인: 1 g/m³ = 1000 mg/m³ = 1,000,000 µg/m³</div>
+      </div>
+
+      <!-- 2) DustTrack Weight Factor Calculator -->
+      <div class="card span2">
+        <h2>2. DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
         <div class="hint">
-          빠른 확인: 1 g/m³ = 1000 mg/m³ = 1,000,000 µg/m³
+          필터 전/후 무게와 유량/시간으로 기준 농도를 계산하고, DustTrack 평균값 대비 보정 팩터(New Cal Factor)를 산출합니다.
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row cols4">
+          <div>
+            <label>Filter Pre Weight (mg)</label>
+            <input id="d_pre" type="number" step="any" value="74.022">
+          </div>
+          <div>
+            <label>Filter Post Weight (mg)</label>
+            <input id="d_post" type="number" step="any" value="89.195">
+          </div>
+          <div>
+            <label>DustTrack Flow Rate (L/min)</label>
+            <input id="d_flow_lmin" type="number" step="any" value="1">
+          </div>
+          <div>
+            <label>Total Sample Time (min)</label>
+            <input id="d_time_min" type="number" step="any" value="1305">
+          </div>
+        </div>
+
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>Avg. DustTrack Concentration (mg/m³)</label>
+            <input id="d_dt_avg" type="number" step="any" value="12.6">
+          </div>
+          <div>
+            <label>Current Cal Factor Set</label>
+            <input id="d_cur_factor" type="number" step="any" value="1">
+          </div>
+          <div>
+            <label>결과(New Cal Factor)</label>
+            <div class="out big" id="d_new_factor">-</div>
+          </div>
+        </div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>Weight Gain (mg)</label>
+            <div class="out" id="d_gain_mg">-</div>
+          </div>
+          <div>
+            <label>Flow (m³/min)</label>
+            <div class="out" id="d_flow_m3min">-</div>
+          </div>
+          <div>
+            <label>Total Volume (m³)</label>
+            <div class="out" id="d_total_m3">-</div>
+          </div>
+          <div>
+            <label>Sample Ref. Conc (mg/m³)</label>
+            <div class="out" id="d_ref_mgm3">-</div>
+          </div>
+        </div>
+
+        <div class="warn" id="d_warn"></div>
+
+        <div class="hint mono" style="margin-top:10px">
+          Ref(mg/m³)= (Post−Pre) / ((Flow L/min ÷ 1000) × Time min) ·
+          NewFactor = (Ref / DustTrackAvg) × CurrentFactor
         </div>
       </div>
 
-    <!-- 2) ppm <-> mg/Nm3 (EASY) -->
-<div class="card">
-  <h2>가스 농도 환산 <span class="badge">초보모드</span></h2>
-  <div class="hint">1) 가스 선택 → 2) 변환 방향 선택 → 3) 값 입력하면 끝</div>
-
-  <div class="row cols3" style="margin-top:10px">
-    <div>
-      <label>가스 선택</label>
-      <select id="gasPick">
-        <option value="SO2" selected>SO2</option>
-        <option value="NO2">NO2</option>
-        <option value="NO">NO</option>
-        <option value="CO">CO</option>
-        <option value="CO2">CO2</option>
-        <option value="O2">O2</option>
-        <option value="NH3">NH3</option>
-        <option value="H2S">H2S</option>
-        <option value="CH4">CH4</option>
-        <option value="custom">직접입력</option>
-      </select>
-    </div>
-
-    <div>
-      <label>분자량 MW (자동)</label>
-      <input id="mw" type="number" step="any" value="64.066" />
-      <div class="hint">직접입력 선택 시 수정 가능</div>
-    </div>
-
-    <div>
-      <label>기준조건</label>
-      <select id="stpMode">
-        <option value="0C" selected>0℃, 1atm (Nm³)</option>
-        <option value="20C">20℃, 1atm</option>
-        <option value="25C">25℃, 1atm</option>
-      </select>
-    </div>
-  </div>
-
-  <div class="row cols2" style="margin-top:10px">
-    <div>
-      <label>변환 방향</label>
-      <select id="dir">
-        <option value="ppm2mg" selected>ppm → mg/Nm³</option>
-        <option value="mg2ppm">mg/Nm³ → ppm</option>
-      </select>
-      <div class="hint">한 방향만 입력하도록 해서 헷갈림을 줄였습니다.</div>
-    </div>
-
-    <div>
-      <label>입력값</label>
-      <input id="valIn" type="number" step="any" value="100" />
-      <div class="hint" id="valHint">ppm 값을 입력하세요.</div>
-    </div>
-  </div>
-
-  <div class="row cols1" style="margin-top:10px">
-    <div>
-      <label>결과</label>
-      <div class="out" id="easyOut" style="font-size:18px;padding:14px;border-style:solid;border-color:rgba(8,96,168,.25);">
-        -
-      </div>
-      <div class="hint mono" id="easyFormula">-</div>
-    </div>
-  </div>
-
-  <div class="warn" id="mwWarn"></div>
-</div>
-
-      <!-- 3) Flow unit conversion -->
+      <!-- 3) Gas conversion: Volume %, mg/m3, ppm -->
       <div class="card">
-        <h2>유량 단위 환산 <span class="badge">m³/h ↔ L/min ↔ Nm³/h ↔ NL/min</span></h2>
-        <div class="row cols2">
+        <h2>3. 가스 농도 환산 <span class="badge">vol% / ppm / mg/m³</span></h2>
+        <div class="hint">
+          가스 선택 → 분자량 자동 입력. 입력 단위를 선택하면 ppm/vol%/mg/m³가 동시에 계산됩니다.
+        </div>
+
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>가스 선택</label>
+            <select id="g_gas">
+              <option value="SO2" selected>SO₂</option>
+              <option value="NO2">NO₂</option>
+              <option value="NO">NO</option>
+              <option value="CO">CO</option>
+              <option value="CO2">CO₂</option>
+              <option value="O2">O₂</option>
+              <option value="NH3">NH₃</option>
+              <option value="H2S">H₂S</option>
+              <option value="CH4">CH₄</option>
+              <option value="custom">직접입력</option>
+            </select>
+          </div>
+          <div>
+            <label>분자량 MW (g/mol)</label>
+            <input id="g_mw" type="number" step="any" value="64.066" />
+            <div class="hint">“직접입력” 선택 시 수정 가능</div>
+          </div>
+          <div>
+            <label>기준조건(표준) 선택</label>
+            <select id="g_stp">
+              <option value="0C" selected>0℃, 1atm (Nm³)</option>
+              <option value="20C">20℃, 1atm</option>
+              <option value="25C">25℃, 1atm</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row cols2" style="margin-top:10px">
           <div>
             <label>입력값</label>
-            <input id="flowIn" type="number" step="any" value="100">
+            <input id="g_val" type="number" step="any" value="100" />
           </div>
           <div>
             <label>입력 단위</label>
-            <select id="flowUnit">
+            <select id="g_unit">
+              <option value="ppm" selected>ppm</option>
+              <option value="volpct">Volume %</option>
+              <option value="mgm3">mg/m³ (표준조건 기준)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>결과 (ppm)</label>
+            <div class="out" id="g_out_ppm">-</div>
+          </div>
+          <div>
+            <label>결과 (Volume %)</label>
+            <div class="out" id="g_out_volpct">-</div>
+          </div>
+          <div>
+            <label>결과 (mg/m³)</label>
+            <div class="out" id="g_out_mgm3">-</div>
+          </div>
+        </div>
+
+        <div class="warn" id="g_warn"></div>
+
+        <div class="hint mono" style="margin-top:10px">
+          vol% = ppm / 10,000 · mg/m³ = ppm × MW / Vm (Vm: 몰부피 L/mol, 선택한 표준조건 기준)
+        </div>
+      </div>
+
+      <!-- 4) Flow unit conversion -->
+      <div class="card">
+        <h2>4. 유량 단위 환산 <span class="badge">m³/h ↔ L/min ↔ Nm³/h ↔ NL/min</span></h2>
+        <div class="row cols2">
+          <div>
+            <label>입력값</label>
+            <input id="f_in" type="number" step="any" value="100">
+          </div>
+          <div>
+            <label>입력 단위</label>
+            <select id="f_unit">
               <option value="m3h" selected>m³/h</option>
               <option value="lmin">L/min</option>
               <option value="nm3h">Nm³/h</option>
@@ -323,84 +407,85 @@
             </select>
           </div>
         </div>
+
         <div class="row cols4" style="margin-top:10px">
           <div>
             <label>결과 (m³/h)</label>
-            <div class="out" id="flowOutM3h">-</div>
+            <div class="out" id="f_out_m3h">-</div>
           </div>
           <div>
             <label>결과 (L/min)</label>
-            <div class="out" id="flowOutLmin">-</div>
+            <div class="out" id="f_out_lmin">-</div>
           </div>
           <div>
             <label>결과 (Nm³/h)</label>
-            <div class="out" id="flowOutNm3h">-</div>
+            <div class="out" id="f_out_nm3h">-</div>
           </div>
           <div>
             <label>결과 (NL/min)</label>
-            <div class="out" id="flowOutNlmin">-</div>
+            <div class="out" id="f_out_nlmin">-</div>
           </div>
         </div>
+
         <div class="hint">
-          단위 스케일 변환용입니다. 실제 기체의 Actual↔Normal 보정은 아래 “운전조건(P,T)” 카드에서 계산하세요.
+          이 카드의 Nm³ 표시는 “단위 스케일” 환산입니다. 실제 운전조건(P,T) 보정은 5번 카드에서 계산하세요.
         </div>
       </div>
 
-      <!-- 4) Actual <-> Normal with P,T -->
+      <!-- 5) Actual <-> Normal with P,T -->
       <div class="card span2">
-        <h2>Actual ↔ Normal 환산 (운전조건 P,T) <span class="badge">m³/h ↔ Nm³/h</span></h2>
+        <h2>5. Actual ↔ Normal 환산 (운전조건 P,T) <span class="badge">m³/h ↔ Nm³/h</span></h2>
 
         <div class="row cols4">
           <div>
             <label>입력값</label>
-            <input id="ptFlowIn" type="number" step="any" value="1000">
+            <input id="pt_in" type="number" step="any" value="1000">
           </div>
           <div>
             <label>입력 종류</label>
-            <select id="ptMode">
+            <select id="pt_mode">
               <option value="A2N" selected>Actual m³/h → Normal Nm³/h</option>
               <option value="N2A">Normal Nm³/h → Actual m³/h</option>
             </select>
           </div>
           <div>
             <label>운전 온도 Ta (℃)</label>
-            <input id="Ta" type="number" step="any" value="120">
+            <input id="pt_Ta" type="number" step="any" value="120">
           </div>
           <div>
             <label>운전 압력 Pa (kPa, absolute)</label>
-            <input id="Pa" type="number" step="any" value="101.325">
-            <div class="hint">게이지압이면 절대압으로 변환 필요</div>
+            <input id="pt_Pa" type="number" step="any" value="101.325">
+            <div class="hint">게이지압이면 절대압으로 변환(예: +101.325)</div>
           </div>
         </div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
             <label>기준 온도 Tn (℃)</label>
-            <input id="Tn" type="number" step="any" value="0">
+            <input id="pt_Tn" type="number" step="any" value="0">
           </div>
           <div>
             <label>기준 압력 Pn (kPa, abs)</label>
-            <input id="Pn" type="number" step="any" value="101.325">
+            <input id="pt_Pn" type="number" step="any" value="101.325">
           </div>
           <div>
             <label>결과</label>
-            <div class="out" id="ptOut">-</div>
+            <div class="out" id="pt_out">-</div>
           </div>
           <div>
             <label>사용 공식</label>
-            <div class="out mono" id="ptFormula">-</div>
+            <div class="out mono" id="pt_formula">-</div>
           </div>
         </div>
 
         <div class="hint">
-          이상기체 기반: <span class="mono">Qn = Qa × (Pa/Pn) × (TnK/TaK)</span> (K=℃+273.15).
-          ※ 습식/건식, 수분/산소보정, 압력손실 위치 등에 따라 추가 보정이 필요할 수 있습니다.
+          이상기체 기반: <span class="mono">Qn = Qa × (Pa/Pn) × (TnK/TaK)</span> (K=℃+273.15)
         </div>
       </div>
 
       <div class="foot span2">
         <b>(주)이앤인스트루먼트</b> · 환경/산업공정 계측 최적화 솔루션<br/>
-        블로그/기술자료에 적용하실 경우, 버튼 텍스트 예: “가스 농도/유량 환산 계산기 바로가기”
+        블로그/기술자료에 적용 시 버튼 문구 예: “단위환산 계산기(가스/유량/먼지) 바로가기”
       </div>
     </div>
   </div>
@@ -424,107 +509,145 @@
     return x.toLocaleString(undefined, { maximumFractionDigits: d });
   };
 
-  // ---------- 1) mass concentration ----------
+  // ---------- 1) Mass concentration ----------
   function recalcMass(){
-    const v = num($("massIn").value);
-    const u = $("massUnit").value;
+    const v = num($("m_in").value);
+    const u = $("m_unit").value;
+
     let mg;
     if (u === "ug") mg = v / 1000;
     else if (u === "mg") mg = v;
     else if (u === "g") mg = v * 1000;
     else mg = NaN;
 
-    const ug = mg * 1000;
-    const g  = mg / 1000;
-
-    $("massOutUg").textContent = `${fmt(ug)} µg/m³`;
-    $("massOutMg").textContent = `${fmt(mg)} mg/m³`;
-    $("massOutG").textContent  = `${fmt(g, 9)} g/m³`;
+    $("m_out_ug").textContent = `${fmt(mg * 1000)} µg/m³`;
+    $("m_out_mg").textContent = `${fmt(mg)} mg/m³`;
+    $("m_out_g").textContent  = `${fmt(mg / 1000, 9)} g/m³`;
   }
 
-  // ---------- 2) ppm <-> mg/Nm3 ----------
-// ---------- 2) Gas conversion EASY ----------
-const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 };
+  // ---------- 2) DustTrack Weight Factor (from Excel) ----------
+  function recalcDust(){
+    const pre = num($("d_pre").value);
+    const post = num($("d_post").value);
+    const flowL = num($("d_flow_lmin").value);
+    const timeMin = num($("d_time_min").value);
+    const dtAvg = num($("d_dt_avg").value);
+    const curFactor = num($("d_cur_factor").value);
 
-const GAS_DB = {
-  SO2:{label:"SO₂", mw:64.066},
-  NO2:{label:"NO₂", mw:46.0055},
-  NO:{label:"NO", mw:30.006},
-  CO:{label:"CO", mw:28.01},
-  CO2:{label:"CO₂", mw:44.0095},
-  O2:{label:"O₂", mw:31.998},
-  NH3:{label:"NH₃", mw:17.031},
-  H2S:{label:"H₂S", mw:34.081},
-  CH4:{label:"CH₄", mw:16.043},
-};
+    const warn = $("d_warn");
+    warn.style.display = "none";
 
-function ppm_to_mg(ppm, MW, mode){
-  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
-  return ppm * MW / Vm;
-}
-function mg_to_ppm(mg, MW, mode){
-  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
-  return mg * Vm / MW;
-}
+    if (![pre, post, flowL, timeMin, dtAvg, curFactor].every(isNum)){
+      $("d_gain_mg").textContent = "-";
+      $("d_flow_m3min").textContent = "-";
+      $("d_total_m3").textContent = "-";
+      $("d_ref_mgm3").textContent = "-";
+      $("d_new_factor").textContent = "-";
+      return;
+    }
+    if (flowL <= 0 || timeMin <= 0){
+      warn.textContent = "Flow rate(L/min)과 Sample time(min)은 0보다 커야 합니다.";
+      warn.style.display = "block";
+      return;
+    }
+    if (dtAvg <= 0 || curFactor <= 0){
+      warn.textContent = "DustTrack Avg(mg/m³)와 Current Factor는 0보다 커야 합니다.";
+      warn.style.display = "block";
+      return;
+    }
 
-function setGasMW(){
-  const pick = $("gasPick").value;
-  if(pick !== "custom"){
-    $("mw").value = GAS_DB[pick].mw;
-    $("mw").disabled = true;
-  } else {
-    $("mw").disabled = false;
-  }
-  recalcGasEasy();
-}
+    const gain = post - pre;                 // mg
+    const flowM3Min = flowL / 1000.0;        // m3/min
+    const totalM3 = flowM3Min * timeMin;     // m3
+    if (totalM3 <= 0){
+      warn.textContent = "총 샘플링 부피(m³)가 0입니다. 유량/시간을 확인하세요.";
+      warn.style.display = "block";
+      return;
+    }
 
-function setDirHint(){
-  const dir = $("dir").value;
-  $("valHint").textContent = (dir === "ppm2mg")
-    ? "ppm 값을 입력하세요."
-    : "mg/Nm³ 값을 입력하세요.";
-  recalcGasEasy();
-}
+    const ref = gain / totalM3;              // mg/m3
+    const newFactor = (ref / dtAvg) * curFactor;
 
-function recalcGasEasy(){
-  const MW = num($("mw").value);
-  const mode = $("stpMode").value;
-  const dir = $("dir").value;
-  const v = num($("valIn").value);
-  const warn = $("mwWarn");
-  warn.style.display = "none";
-
-  if(!isNum(MW) || MW <= 0){
-    warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
-    warn.style.display = "block";
-    $("easyOut").textContent = "-";
-    $("easyFormula").textContent = "-";
-    return;
-  }
-  if(!isNum(v)){
-    $("easyOut").textContent = "-";
-    $("easyFormula").textContent = "-";
-    return;
+    $("d_gain_mg").textContent = `${fmt(gain)} mg`;
+    $("d_flow_m3min").textContent = `${fmt(flowM3Min, 9)} m³/min`;
+    $("d_total_m3").textContent = `${fmt(totalM3)} m³`;
+    $("d_ref_mgm3").textContent = `${fmt(ref)} mg/m³`;
+    $("d_new_factor").textContent = fmt(newFactor);
   }
 
-  const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+  // ---------- 3) Gas conversion: vol% / ppm / mg/m3 ----------
+  const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 }; // L/mol (approx)
+  const GAS_DB = {
+    SO2:{label:"SO₂", mw:64.066},
+    NO2:{label:"NO₂", mw:46.0055},
+    NO:{label:"NO", mw:30.006},
+    CO:{label:"CO", mw:28.01},
+    CO2:{label:"CO₂", mw:44.0095},
+    O2:{label:"O₂", mw:31.998},
+    NH3:{label:"NH₃", mw:17.031},
+    H2S:{label:"H₂S", mw:34.081},
+    CH4:{label:"CH₄", mw:16.043},
+  };
 
-  if(dir === "ppm2mg"){
-    const out = ppm_to_mg(v, MW, mode);
-    $("easyOut").textContent = `${fmt(out)} mg/Nm³`;
-    $("easyFormula").textContent = `mg/Nm³ = ppm × MW / Vm = ${fmt(v)} × ${fmt(MW,4)} / ${fmt(Vm,3)}`;
-  } else {
-    const out = mg_to_ppm(v, MW, mode);
-    $("easyOut").textContent = `${fmt(out)} ppm`;
-    $("easyFormula").textContent = `ppm = mg/Nm³ × Vm / MW = ${fmt(v)} × ${fmt(Vm,3)} / ${fmt(MW,4)}`;
+  function setGasMW(){
+    const pick = $("g_gas").value;
+    if (pick !== "custom"){
+      $("g_mw").value = GAS_DB[pick].mw;
+      $("g_mw").disabled = true;
+    } else {
+      $("g_mw").disabled = false;
+    }
+    recalcGas();
   }
-}
 
-  // ---------- 3) flow unit conversion ----------
+  function recalcGas(){
+    const MW = num($("g_mw").value);
+    const stp = $("g_stp").value;
+    const unit = $("g_unit").value;
+    const v = num($("g_val").value);
+    const warn = $("g_warn");
+    warn.style.display = "none";
+
+    if (!isNum(MW) || MW <= 0){
+      warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
+      warn.style.display = "block";
+      $("g_out_ppm").textContent = "-";
+      $("g_out_volpct").textContent = "-";
+      $("g_out_mgm3").textContent = "-";
+      return;
+    }
+    if (!isNum(v)){
+      $("g_out_ppm").textContent = "-";
+      $("g_out_volpct").textContent = "-";
+      $("g_out_mgm3").textContent = "-";
+      return;
+    }
+
+    const Vm = MOLAR_VOL[stp] ?? MOLAR_VOL["0C"]; // L/mol
+    // base compute to ppm
+    let ppm;
+    if (unit === "ppm"){
+      ppm = v;
+    } else if (unit === "volpct"){
+      ppm = v * 10000.0;
+    } else { // mgm3
+      // ppm = mg/m3 * Vm / MW
+      ppm = v * Vm / MW;
+    }
+
+    const volpct = ppm / 10000.0;
+    const mgm3 = ppm * MW / Vm;
+
+    $("g_out_ppm").textContent = `${fmt(ppm)} ppm`;
+    $("g_out_volpct").textContent = `${fmt(volpct, 9)} vol%`;
+    $("g_out_mgm3").textContent = `${fmt(mgm3)} mg/m³`;
+  }
+
+  // ---------- 4) Flow conversion ----------
   const K = 16.6666666667; // 1 m3/h = 16.6667 L/min
   function recalcFlow(){
-    const v = num($("flowIn").value);
-    const u = $("flowUnit").value;
+    const v = num($("f_in").value);
+    const u = $("f_unit").value;
 
     let m3h = NaN;
     if (u === "m3h") m3h = v;
@@ -534,64 +657,70 @@ function recalcGasEasy(){
 
     const lmin = m3h * K;
 
-    // For display, keep same scale for Nm3h/Nlmin (actual PT correction uses next card)
-    $("flowOutM3h").textContent  = `${fmt(m3h)} m³/h`;
-    $("flowOutLmin").textContent = `${fmt(lmin)} L/min`;
-    $("flowOutNm3h").textContent = `${fmt(m3h)} Nm³/h`;
-    $("flowOutNlmin").textContent= `${fmt(lmin)} NL/min`;
+    $("f_out_m3h").textContent  = `${fmt(m3h)} m³/h`;
+    $("f_out_lmin").textContent = `${fmt(lmin)} L/min`;
+    $("f_out_nm3h").textContent = `${fmt(m3h)} Nm³/h`;
+    $("f_out_nlmin").textContent= `${fmt(lmin)} NL/min`;
   }
 
-  // ---------- 4) Actual <-> Normal with P,T ----------
+  // ---------- 5) Actual <-> Normal with P,T ----------
   function recalcPT(){
-    const Qin  = num($("ptFlowIn").value);
-    const mode = $("ptMode").value; // A2N or N2A
-    const TaC  = num($("Ta").value);
-    const Pa   = num($("Pa").value); // kPa abs
-    const TnC  = num($("Tn").value);
-    const Pn   = num($("Pn").value); // kPa abs
+    const Qin  = num($("pt_in").value);
+    const mode = $("pt_mode").value;
+    const TaC  = num($("pt_Ta").value);
+    const Pa   = num($("pt_Pa").value);
+    const TnC  = num($("pt_Tn").value);
+    const Pn   = num($("pt_Pn").value);
 
     const TaK = TaC + 273.15;
     const TnK = TnC + 273.15;
 
     if (![Qin, TaK, Pa, TnK, Pn].every(isNum) || TaK <= 0 || TnK <= 0 || Pa <= 0 || Pn <= 0){
-      $("ptOut").textContent = "-";
-      $("ptFormula").textContent = "Qn = Qa × (Pa/Pn) × (TnK/TaK)";
+      $("pt_out").textContent = "-";
+      $("pt_formula").textContent = "Qn = Qa × (Pa/Pn) × (TnK/TaK)";
       return;
     }
 
     let out;
     if (mode === "A2N"){
       out = Qin * (Pa / Pn) * (TnK / TaK);
-      $("ptOut").textContent = `${fmt(out)} Nm³/h`;
-      $("ptFormula").textContent = `Qn = Qa × (${fmt(Pa,4)}/${fmt(Pn,4)}) × (${fmt(TnK,4)}/${fmt(TaK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} Nm³/h`;
+      $("pt_formula").textContent = `Qn = Qa × (${fmt(Pa,4)}/${fmt(Pn,4)}) × (${fmt(TnK,4)}/${fmt(TaK,4)})`;
     } else {
-      // N2A: Qa = Qn × (Pn/Pa) × (TaK/TnK)
       out = Qin * (Pn / Pa) * (TaK / TnK);
-      $("ptOut").textContent = `${fmt(out)} m³/h`;
-      $("ptFormula").textContent = `Qa = Qn × (${fmt(Pn,4)}/${fmt(Pa,4)}) × (${fmt(TaK,4)}/${fmt(TnK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} m³/h`;
+      $("pt_formula").textContent = `Qa = Qn × (${fmt(Pn,4)}/${fmt(Pa,4)}) × (${fmt(TaK,4)}/${fmt(TnK,4)})`;
     }
   }
 
   // ---------- reset + copy link ----------
   function resetAll(){
-    $("massIn").value = 100;
-    $("massUnit").value = "mg";
+    $("m_in").value = 100;
+    $("m_unit").value = "mg";
 
-    $("mw").value = 64.066;
-    $("stpMode").value = "0C";
-    $("ppmIn").value = 100;
-    $("mgNm3In").value = "";
+    $("d_pre").value = 74.022;
+    $("d_post").value = 89.195;
+    $("d_flow_lmin").value = 1;
+    $("d_time_min").value = 1305;
+    $("d_dt_avg").value = 12.6;
+    $("d_cur_factor").value = 1;
 
-    $("flowIn").value = 100;
-    $("flowUnit").value = "m3h";
+    $("g_gas").value = "SO2";
+    $("g_stp").value = "0C";
+    $("g_unit").value = "ppm";
+    $("g_val").value = 100;
 
-    $("ptFlowIn").value = 1000;
-    $("ptMode").value = "A2N";
-    $("Ta").value = 120;
-    $("Pa").value = 101.325;
-    $("Tn").value = 0;
-    $("Pn").value = 101.325;
+    $("f_in").value = 100;
+    $("f_unit").value = "m3h";
 
+    $("pt_in").value = 1000;
+    $("pt_mode").value = "A2N";
+    $("pt_Ta").value = 120;
+    $("pt_Pa").value = 101.325;
+    $("pt_Tn").value = 0;
+    $("pt_Pn").value = 101.325;
+
+    setGasMW();
     recalcAll();
   }
 
@@ -607,40 +736,46 @@ function recalcGasEasy(){
 
   function recalcAll(){
     recalcMass();
+    recalcDust();
     recalcGas();
     recalcFlow();
     recalcPT();
   }
 
-  // events
-  $("massIn").addEventListener("input", recalcMass);
-  $("massUnit").addEventListener("change", recalcMass);
-  $("gasPick").addEventListener("change", setGasMW);
-  $("mw").addEventListener("input", () => recalcGas());
-  $("stpMode").addEventListener("change", () => recalcGas());
-  $("ppmIn").addEventListener("input", () => recalcGas("ppm"));
-  $("mgNm3In").addEventListener("input", () => recalcGas("mg"));
-  $("gasPick").addEventListener("change", setGasMW);
-  $("dir").addEventListener("change", setDirHint);
-  $("mw").addEventListener("input", recalcGasEasy);
-  $("stpMode").addEventListener("change", recalcGasEasy);
-  $("valIn").addEventListener("input", recalcGasEasy);
-  $("flowIn").addEventListener("input", recalcFlow);
-  $("flowUnit").addEventListener("change", recalcFlow);
+  // ---------- events (즉시 반영: change + input) ----------
+  ["input","change","keyup"].forEach(ev=>{
+    $("m_in").addEventListener(ev, recalcMass);
+    $("m_unit").addEventListener(ev, recalcMass);
 
-  ["ptFlowIn","ptMode","Ta","Pa","Tn","Pn"].forEach(id=>{
-    $(id).addEventListener("input", recalcPT);
-    $(id).addEventListener("change", recalcPT);
+    $("d_pre").addEventListener(ev, recalcDust);
+    $("d_post").addEventListener(ev, recalcDust);
+    $("d_flow_lmin").addEventListener(ev, recalcDust);
+    $("d_time_min").addEventListener(ev, recalcDust);
+    $("d_dt_avg").addEventListener(ev, recalcDust);
+    $("d_cur_factor").addEventListener(ev, recalcDust);
+
+    $("g_val").addEventListener(ev, recalcGas);
+    $("g_unit").addEventListener(ev, recalcGas);
+    $("g_mw").addEventListener(ev, recalcGas);
+    $("g_stp").addEventListener(ev, recalcGas);
+
+    $("f_in").addEventListener(ev, recalcFlow);
+    $("f_unit").addEventListener(ev, recalcFlow);
+
+    $("pt_in").addEventListener(ev, recalcPT);
+    $("pt_mode").addEventListener(ev, recalcPT);
+    $("pt_Ta").addEventListener(ev, recalcPT);
+    $("pt_Pa").addEventListener(ev, recalcPT);
+    $("pt_Tn").addEventListener(ev, recalcPT);
+    $("pt_Pn").addEventListener(ev, recalcPT);
   });
 
+  $("g_gas").addEventListener("change", setGasMW);
   $("btnReset").addEventListener("click", resetAll);
   $("btnCopyLink").addEventListener("click", copyLink);
 
-  // init
+  // ---------- init ----------
   setGasMW();
-  setDirHint();
-  recalcGasEasy();
-  renderMwTable();
   recalcAll();
 })();
 </script>
