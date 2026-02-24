@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="이앤인스트루먼트 단위환산 계산기 (가스 농도/질량농도/유량/Nm3 환산)" />
+  <title>이앤인스트루먼트 | 단위환산 계산기</title>
+
+  <style>
+    :root{
+      /* E&Instrument tone (from logo) */
+      --primary:#0860A8;   /* blue */
+      --primary-2:#0B74C8; /* brighter blue */
+      --ink:#222;
+      --muted:#667085;
+      --line:#E6E8EC;
+      --bg:#F6F8FB;
+      --card:#FFFFFF;
+      --chip:#EFF6FF;
+      --shadow: 0 10px 30px rgba(16,24,40,.08);
+      --radius: 16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      color:var(--ink);
+      background: radial-gradient(1100px 500px at 20% -10%, rgba(8,96,168,.16), transparent 60%),
+                  radial-gradient(900px 500px at 110% 10%, rgba(11,116,200,.12), transparent 55%),
+                  var(--bg);
+    }
+    a{color:var(--primary); text-decoration:none}
+    .wrap{max-width:1040px; margin:0 auto; padding:22px 16px 48px;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:14px 16px; background:rgba(255,255,255,.75);
+      border:1px solid var(--line); border-radius:var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:0;
+    }
+    .logoBox{
+      width:44px; height:44px; border-radius:12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      display:grid; place-items:center; color:#fff; font-weight:800;
+      box-shadow: 0 8px 16px rgba(8,96,168,.25);
+      flex:0 0 auto;
+    }
+    .brandText{min-width:0}
+    .brandText .name{font-weight:800; font-size:14px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .brandText .sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .actions{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:9px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+    }
+    .btn.primary{
+      border-color: rgba(8,96,168,.25);
+      background: linear-gradient(135deg, rgba(8,96,168,.12), rgba(11,116,200,.10));
+      color: var(--primary);
+    }
+    .hero{
+      margin-top:14px;
+      padding:18px 16px;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+      box-shadow: var(--shadow);
+    }
+    h1{margin:0 0 8px; font-size:22px}
+    .lead{margin:0; color:var(--muted); font-size:13px; line-height:1.55;}
+    .chips{margin-top:12px; display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      background:var(--chip); border:1px solid rgba(8,96,168,.18);
+      color:var(--primary); padding:7px 10px; border-radius:999px;
+      font-size:12px; font-weight:700;
+    }
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 920px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .span2{ grid-column: 1 / -1; }
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .badge{
+      font-size:11px; font-weight:800;
+      color:var(--primary);
+      background:rgba(8,96,168,.10);
+      border:1px solid rgba(8,96,168,.18);
+      padding:4px 8px;
+      border-radius:999px;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    @media (min-width: 520px){
+      .row.cols2{grid-template-columns: 1fr 1fr;}
+      .row.cols3{grid-template-columns: 1fr 1fr 1fr;}
+      .row.cols4{grid-template-columns: 1fr 1fr 1fr 1fr;}
+    }
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:700;}
+    input, select{
+      width:100%;
+      padding:10px 11px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color: rgba(8,96,168,.5);
+      box-shadow: 0 0 0 4px rgba(8,96,168,.12);
+    }
+    .out{
+      padding:10px 11px;
+      border:1px dashed rgba(102,112,133,.55);
+      border-radius:12px;
+      background:linear-gradient(180deg, #fff, #fbfcfe);
+      font-weight:800;
+      color:#111;
+      overflow:auto;
+      white-space:nowrap;
+    }
+    .hint{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.55;}
+    .warn{
+      margin-top:8px; font-size:12px; font-weight:800;
+      color:#B42318; background:#FEF3F2; border:1px solid #FEE4E2;
+      padding:10px 11px; border-radius:12px;
+      display:none;
+    }
+    table{width:100%; border-collapse:collapse; margin-top:10px; font-size:12px;}
+    th,td{border:1px solid var(--line); padding:8px; text-align:center;}
+    th{background:#F8FAFC; color:#344054; font-weight:900;}
+    .foot{
+      margin-top:14px; font-size:12px; color:var(--muted);
+      padding:14px 16px; border:1px solid var(--line);
+      border-radius:var(--radius); background:rgba(255,255,255,.65);
+    }
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logoBox">E&</div>
+        <div class="brandText">
+          <div class="name">(주)이앤인스트루먼트</div>
+          <div class="sub">www.einstrument.co.kr · Unit Conversion Toolkit</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" type="button" id="btnReset">기본값 복원</button>
+        <button class="btn" type="button" id="btnCopyLink">페이지 링크 복사</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1>단위환산 계산기</h1>
+      <p class="lead">
+        가스 농도(ppm↔mg/Nm³), 질량농도(mg↔g↔µg), 유량(m³/h↔L/min↔Nm³/h), 그리고 운전조건(P,T) 기반
+        Actual↔Normal 환산을 한 페이지에서 처리합니다.
+      </p>
+      <div class="chips">
+        <div class="chip">ppm ↔ mg/Nm³</div>
+        <div class="chip">mg/m³ ↔ g/m³ ↔ µg/m³</div>
+        <div class="chip">m³/h ↔ L/min</div>
+        <div class="chip">Actual ↔ Nm³/h (P,T)</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- 1) Mass concentration -->
+      <div class="card">
+        <h2>질량농도 환산 <span class="badge">mg/m³ ↔ g/m³ ↔ µg/m³</span></h2>
+        <div class="row cols2">
+          <div>
+            <label>입력값</label>
+            <input id="massIn" type="number" step="any" value="100">
+          </div>
+          <div>
+            <label>입력 단위</label>
+            <select id="massUnit">
+              <option value="ug">µg/m³</option>
+              <option value="mg" selected>mg/m³</option>
+              <option value="g">g/m³</option>
+            </select>
+          </div>
+        </div>
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>결과 (µg/m³)</label>
+            <div class="out" id="massOutUg">-</div>
+          </div>
+          <div>
+            <label>결과 (mg/m³)</label>
+            <div class="out" id="massOutMg">-</div>
+          </div>
+          <div>
+            <label>결과 (g/m³)</label>
+            <div class="out" id="massOutG">-</div>
+          </div>
+        </div>
+        <div class="hint">
+          빠른 확인: 1 g/m³ = 1000 mg/m³ = 1,000,000 µg/m³
+        </div>
+      </div>
+
+      <!-- 2) ppm <-> mg/Nm3 -->
+      <div class="card">
+        <h2>가스 농도 환산 <span class="badge">ppm ↔ mg/Nm³</span></h2>
+
+        <div class="row cols2">
+          <div>
+            <label>분자량 MW (g/mol)</label>
+            <input id="mw" type="number" step="any" value="64.066">
+            <div class="hint">예: SO₂ 64.066 / NO₂ 46.0055 / CO 28.01 / CO₂ 44.0095</div>
+          </div>
+          <div>
+            <label>기준조건 선택</label>
+            <select id="stpMode">
+              <option value="0C" selected>0℃, 1atm (Nm³)</option>
+              <option value="20C">20℃, 1atm (참고)</option>
+              <option value="25C">25℃, 1atm (참고)</option>
+            </select>
+            <div class="hint">기체 몰부피가 달라져 변환 계수가 달라집니다.</div>
+          </div>
+        </div>
+
+        <div class="row cols2" style="margin-top:10px">
+          <div>
+            <label>입력 ppm</label>
+            <input id="ppmIn" type="number" step="any" value="100">
+          </div>
+          <div>
+            <label>입력 mg/Nm³</label>
+            <input id="mgNm3In" type="number" step="any" placeholder="예: 285.8">
+            <div class="hint">둘 중 하나만 입력해도 반대값 자동 계산됩니다.</div>
+          </div>
+        </div>
+
+        <div class="row cols2" style="margin-top:10px">
+          <div>
+            <label>ppm → mg/Nm³</label>
+            <div class="out" id="ppmToMg">-</div>
+          </div>
+          <div>
+            <label>mg/Nm³ → ppm</label>
+            <div class="out" id="mgToPpm">-</div>
+          </div>
+        </div>
+
+        <div class="warn" id="mwWarn"></div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>가스</th><th>MW</th><th>1 ppm → mg/Nm³ (0℃ 기준)</th>
+            </tr>
+          </thead>
+          <tbody id="mwTable"></tbody>
+        </table>
+
+        <div class="hint">
+          공식(이상기체): <span class="mono">mg/m³ = ppm × MW / Vm</span> (Vm: 몰부피 L/mol).
+          0℃ 기준 Vm=22.414.
+        </div>
+      </div>
+
+      <!-- 3) Flow unit conversion -->
+      <div class="card">
+        <h2>유량 단위 환산 <span class="badge">m³/h ↔ L/min ↔ Nm³/h ↔ NL/min</span></h2>
+        <div class="row cols2">
+          <div>
+            <label>입력값</label>
+            <input id="flowIn" type="number" step="any" value="100">
+          </div>
+          <div>
+            <label>입력 단위</label>
+            <select id="flowUnit">
+              <option value="m3h" selected>m³/h</option>
+              <option value="lmin">L/min</option>
+              <option value="nm3h">Nm³/h</option>
+              <option value="nlmin">NL/min</option>
+            </select>
+          </div>
+        </div>
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>결과 (m³/h)</label>
+            <div class="out" id="flowOutM3h">-</div>
+          </div>
+          <div>
+            <label>결과 (L/min)</label>
+            <div class="out" id="flowOutLmin">-</div>
+          </div>
+          <div>
+            <label>결과 (Nm³/h)</label>
+            <div class="out" id="flowOutNm3h">-</div>
+          </div>
+          <div>
+            <label>결과 (NL/min)</label>
+            <div class="out" id="flowOutNlmin">-</div>
+          </div>
+        </div>
+        <div class="hint">
+          단위 스케일 변환용입니다. 실제 기체의 Actual↔Normal 보정은 아래 “운전조건(P,T)” 카드에서 계산하세요.
+        </div>
+      </div>
+
+      <!-- 4) Actual <-> Normal with P,T -->
+      <div class="card span2">
+        <h2>Actual ↔ Normal 환산 (운전조건 P,T) <span class="badge">m³/h ↔ Nm³/h</span></h2>
+
+        <div class="row cols4">
+          <div>
+            <label>입력값</label>
+            <input id="ptFlowIn" type="number" step="any" value="1000">
+          </div>
+          <div>
+            <label>입력 종류</label>
+            <select id="ptMode">
+              <option value="A2N" selected>Actual m³/h → Normal Nm³/h</option>
+              <option value="N2A">Normal Nm³/h → Actual m³/h</option>
+            </select>
+          </div>
+          <div>
+            <label>운전 온도 Ta (℃)</label>
+            <input id="Ta" type="number" step="any" value="120">
+          </div>
+          <div>
+            <label>운전 압력 Pa (kPa, absolute)</label>
+            <input id="Pa" type="number" step="any" value="101.325">
+            <div class="hint">게이지압이면 절대압으로 변환 필요</div>
+          </div>
+        </div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>기준 온도 Tn (℃)</label>
+            <input id="Tn" type="number" step="any" value="0">
+          </div>
+          <div>
+            <label>기준 압력 Pn (kPa, abs)</label>
+            <input id="Pn" type="number" step="any" value="101.325">
+          </div>
+          <div>
+            <label>결과</label>
+            <div class="out" id="ptOut">-</div>
+          </div>
+          <div>
+            <label>사용 공식</label>
+            <div class="out mono" id="ptFormula">-</div>
+          </div>
+        </div>
+
+        <div class="hint">
+          이상기체 기반: <span class="mono">Qn = Qa × (Pa/Pn) × (TnK/TaK)</span> (K=℃+273.15).
+          ※ 습식/건식, 수분/산소보정, 압력손실 위치 등에 따라 추가 보정이 필요할 수 있습니다.
+        </div>
+      </div>
+
+      <div class="foot span2">
+        <b>(주)이앤인스트루먼트</b> · 환경/산업공정 계측 최적화 솔루션<br/>
+        블로그/기술자료에 적용하실 경우, 버튼 텍스트 예: “가스 농도/유량 환산 계산기 바로가기”
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // ---------- helpers ----------
+  const $ = (id) => document.getElementById(id);
+  const isNum = (x) => typeof x === "number" && isFinite(x);
+  const num = (v) => {
+    const s = String(v ?? "").trim();
+    if (!s) return NaN;
+    return Number(s);
+  };
+  const fmt = (x, maxFrac=6) => {
+    if (!isNum(x)) return "-";
+    const abs = Math.abs(x);
+    let d = maxFrac;
+    if (abs >= 1000) d = Math.min(d, 4);
+    if (abs >= 100000) d = Math.min(d, 3);
+    return x.toLocaleString(undefined, { maximumFractionDigits: d });
+  };
+
+  // ---------- 1) mass concentration ----------
+  function recalcMass(){
+    const v = num($("massIn").value);
+    const u = $("massUnit").value;
+    let mg;
+    if (u === "ug") mg = v / 1000;
+    else if (u === "mg") mg = v;
+    else if (u === "g") mg = v * 1000;
+    else mg = NaN;
+
+    const ug = mg * 1000;
+    const g  = mg / 1000;
+
+    $("massOutUg").textContent = `${fmt(ug)} µg/m³`;
+    $("massOutMg").textContent = `${fmt(mg)} mg/m³`;
+    $("massOutG").textContent  = `${fmt(g, 9)} g/m³`;
+  }
+
+  // ---------- 2) ppm <-> mg/Nm3 ----------
+  // Molar volume (L/mol) approx
+  const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 };
+
+  const GAS_LIST = [
+    {name:"SO₂", mw:64.066},
+    {name:"NO₂", mw:46.0055},
+    {name:"NO",  mw:30.006},
+    {name:"CO",  mw:28.01},
+    {name:"CO₂", mw:44.0095},
+    {name:"O₂",  mw:31.998},
+    {name:"NH₃", mw:17.031},
+    {name:"H₂S", mw:34.081},
+    {name:"CH₄", mw:16.043},
+  ];
+
+  function ppm_to_mg(ppm, MW, mode){
+    const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+    return ppm * MW / Vm;
+  }
+  function mg_to_ppm(mg, MW, mode){
+    const Vm = MOLAR_VOL[mode] ?? MOLAR_VOL["0C"];
+    return mg * Vm / MW;
+  }
+
+  function renderMwTable(){
+    const tbody = $("mwTable");
+    tbody.innerHTML = GAS_LIST.map(g => {
+      const v = ppm_to_mg(1, g.mw, "0C");
+      return `<tr><td>${g.name}</td><td>${fmt(g.mw,4)}</td><td>${fmt(v,6)}</td></tr>`;
+    }).join("");
+  }
+
+  function recalcGas(from){
+    const MW = num($("mw").value);
+    const mode = $("stpMode").value;
+    const warn = $("mwWarn");
+    warn.style.display = "none";
+
+    if (!isNum(MW) || MW <= 0){
+      warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
+      warn.style.display = "block";
+      $("ppmToMg").textContent = "-";
+      $("mgToPpm").textContent = "-";
+      return;
+    }
+
+    const ppmV = num($("ppmIn").value);
+    const mgV  = num($("mgNm3In").value);
+
+    if (from === "ppm" && isNum(ppmV)){
+      const mgOut = ppm_to_mg(ppmV, MW, mode);
+      $("ppmToMg").textContent = `${fmt(mgOut)} mg/Nm³`;
+      $("mgToPpm").textContent = `${fmt(ppmV)} ppm`;
+      // reflect to other input without fighting typing
+      if (document.activeElement?.id !== "mgNm3In") $("mgNm3In").value = isNum(mgOut) ? mgOut : "";
+    } else if (from === "mg" && isNum(mgV)){
+      const ppmOut = mg_to_ppm(mgV, MW, mode);
+      $("mgToPpm").textContent = `${fmt(ppmOut)} ppm`;
+      $("ppmToMg").textContent = `${fmt(mgV)} mg/Nm³`;
+      if (document.activeElement?.id !== "ppmIn") $("ppmIn").value = isNum(ppmOut) ? ppmOut : "";
+    } else {
+      // fallback
+      if (isNum(ppmV)){
+        const mgOut = ppm_to_mg(ppmV, MW, mode);
+        $("ppmToMg").textContent = `${fmt(mgOut)} mg/Nm³`;
+        $("mgToPpm").textContent = `${fmt(ppmV)} ppm`;
+      } else if (isNum(mgV)){
+        const ppmOut = mg_to_ppm(mgV, MW, mode);
+        $("mgToPpm").textContent = `${fmt(ppmOut)} ppm`;
+        $("ppmToMg").textContent = `${fmt(mgV)} mg/Nm³`;
+      } else {
+        $("ppmToMg").textContent = "-";
+        $("mgToPpm").textContent = "-";
+      }
+    }
+  }
+
+  // ---------- 3) flow unit conversion ----------
+  const K = 16.6666666667; // 1 m3/h = 16.6667 L/min
+  function recalcFlow(){
+    const v = num($("flowIn").value);
+    const u = $("flowUnit").value;
+
+    let m3h = NaN;
+    if (u === "m3h") m3h = v;
+    else if (u === "lmin") m3h = v / K;
+    else if (u === "nm3h") m3h = v;   // scale only
+    else if (u === "nlmin") m3h = v / K;
+
+    const lmin = m3h * K;
+
+    // For display, keep same scale for Nm3h/Nlmin (actual PT correction uses next card)
+    $("flowOutM3h").textContent  = `${fmt(m3h)} m³/h`;
+    $("flowOutLmin").textContent = `${fmt(lmin)} L/min`;
+    $("flowOutNm3h").textContent = `${fmt(m3h)} Nm³/h`;
+    $("flowOutNlmin").textContent= `${fmt(lmin)} NL/min`;
+  }
+
+  // ---------- 4) Actual <-> Normal with P,T ----------
+  function recalcPT(){
+    const Qin  = num($("ptFlowIn").value);
+    const mode = $("ptMode").value; // A2N or N2A
+    const TaC  = num($("Ta").value);
+    const Pa   = num($("Pa").value); // kPa abs
+    const TnC  = num($("Tn").value);
+    const Pn   = num($("Pn").value); // kPa abs
+
+    const TaK = TaC + 273.15;
+    const TnK = TnC + 273.15;
+
+    if (![Qin, TaK, Pa, TnK, Pn].every(isNum) || TaK <= 0 || TnK <= 0 || Pa <= 0 || Pn <= 0){
+      $("ptOut").textContent = "-";
+      $("ptFormula").textContent = "Qn = Qa × (Pa/Pn) × (TnK/TaK)";
+      return;
+    }
+
+    let out;
+    if (mode === "A2N"){
+      out = Qin * (Pa / Pn) * (TnK / TaK);
+      $("ptOut").textContent = `${fmt(out)} Nm³/h`;
+      $("ptFormula").textContent = `Qn = Qa × (${fmt(Pa,4)}/${fmt(Pn,4)}) × (${fmt(TnK,4)}/${fmt(TaK,4)})`;
+    } else {
+      // N2A: Qa = Qn × (Pn/Pa) × (TaK/TnK)
+      out = Qin * (Pn / Pa) * (TaK / TnK);
+      $("ptOut").textContent = `${fmt(out)} m³/h`;
+      $("ptFormula").textContent = `Qa = Qn × (${fmt(Pn,4)}/${fmt(Pa,4)}) × (${fmt(TaK,4)}/${fmt(TnK,4)})`;
+    }
+  }
+
+  // ---------- reset + copy link ----------
+  function resetAll(){
+    $("massIn").value = 100;
+    $("massUnit").value = "mg";
+
+    $("mw").value = 64.066;
+    $("stpMode").value = "0C";
+    $("ppmIn").value = 100;
+    $("mgNm3In").value = "";
+
+    $("flowIn").value = 100;
+    $("flowUnit").value = "m3h";
+
+    $("ptFlowIn").value = 1000;
+    $("ptMode").value = "A2N";
+    $("Ta").value = 120;
+    $("Pa").value = 101.325;
+    $("Tn").value = 0;
+    $("Pn").value = 101.325;
+
+    recalcAll();
+  }
+
+  async function copyLink(){
+    const url = location.href;
+    try{
+      await navigator.clipboard.writeText(url);
+      alert("페이지 링크를 복사했습니다:\n" + url);
+    }catch(e){
+      prompt("아래 링크를 복사하세요:", url);
+    }
+  }
+
+  function recalcAll(){
+    recalcMass();
+    recalcGas();
+    recalcFlow();
+    recalcPT();
+  }
+
+  // events
+  $("massIn").addEventListener("input", recalcMass);
+  $("massUnit").addEventListener("change", recalcMass);
+
+  $("mw").addEventListener("input", () => recalcGas());
+  $("stpMode").addEventListener("change", () => recalcGas());
+  $("ppmIn").addEventListener("input", () => recalcGas("ppm"));
+  $("mgNm3In").addEventListener("input", () => recalcGas("mg"));
+
+  $("flowIn").addEventListener("input", recalcFlow);
+  $("flowUnit").addEventListener("change", recalcFlow);
+
+  ["ptFlowIn","ptMode","Ta","Pa","Tn","Pn"].forEach(id=>{
+    $(id).addEventListener("input", recalcPT);
+    $(id).addEventListener("change", recalcPT);
+  });
+
+  $("btnReset").addEventListener("click", resetAll);
+  $("btnCopyLink").addEventListener("click", copyLink);
+
+  // init
+  renderMwTable();
+  recalcAll();
+})();
+</script>
+</body>
+</html>
