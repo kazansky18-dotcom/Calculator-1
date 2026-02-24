@@ -246,15 +246,15 @@
     <div>
       <label>가스 선택</label>
       <select id="gasPick">
-        <option value="SO2" selected>SO₂</option>
-        <option value="NO2">NO₂</option>
+        <option value="SO2" selected>SO2</option>
+        <option value="NO2">NO2</option>
         <option value="NO">NO</option>
         <option value="CO">CO</option>
-        <option value="CO2">CO₂</option>
-        <option value="O2">O₂</option>
-        <option value="NH3">NH₃</option>
-        <option value="H2S">H₂S</option>
-        <option value="CH4">CH₄</option>
+        <option value="CO2">CO2</option>
+        <option value="O2">O2</option>
+        <option value="NH3">NH3</option>
+        <option value="H2S">H2S</option>
+        <option value="CH4">CH4</option>
         <option value="custom">직접입력</option>
       </select>
     </div>
@@ -615,7 +615,7 @@ function recalcGasEasy(){
   // events
   $("massIn").addEventListener("input", recalcMass);
   $("massUnit").addEventListener("change", recalcMass);
-
+  $("gasPick").addEventListener("change", setGasMW);
   $("mw").addEventListener("input", () => recalcGas());
   $("stpMode").addEventListener("change", () => recalcGas());
   $("ppmIn").addEventListener("input", () => recalcGas("ppm"));
