@@ -86,10 +86,6 @@
       grid-template-columns: 1fr;
       gap:12px;
     }
-    @media (min-width: 960px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-      .span2{ grid-column: 1 / -1; }
-    }
 
     .card{
       background:var(--card);
@@ -97,6 +93,7 @@
       border-radius:var(--radius);
       padding:14px;
       box-shadow: var(--shadow);
+      width:100%;
     }
     .card h2{
       margin:0 0 10px;
@@ -119,11 +116,6 @@
       grid-template-columns: 1fr;
       gap:10px;
     }
-    @media (min-width: 520px){
-      .row.cols2{grid-template-columns: 1fr 1fr;}
-      .row.cols3{grid-template-columns: 1fr 1fr 1fr;}
-      .row.cols4{grid-template-columns: 1fr 1fr 1fr 1fr;}
-    }
 
     label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px; font-weight:900;}
     input, select{
@@ -134,6 +126,7 @@
       font-size:14px;
       outline:none;
       background:#fff;
+      box-sizing:border-box;
     }
     input:focus, select:focus{
       border-color: rgba(8,96,168,.5);
@@ -164,34 +157,10 @@
     }
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
     .divider{height:1px; background:var(--line); margin:12px 0;}
-    .imgwrap{display:grid; gap:10px;}
-    @media (min-width:960px){ .imgwrap{grid-template-columns: 1fr 1fr;} }
+    .imgwrap{display:grid; gap:10px; grid-template-columns: 1fr;}
     .imgbox{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff; padding:12px; text-align:center}
     .imgbox img{display:block; max-width:700px; width:100%; height:auto; margin:0 auto}
-  
-    /* ===== 단일(세로) 레이아웃 강제 ===== */
-    /* PC에서도 2열로 나뉘지 않고 1→2→3 순서대로 스크롤되도록 설정 */
-    .grid{ grid-template-columns: 1fr !important; }
-    .row.cols2, .row.cols3, .row.cols4{ grid-template-columns: 1fr !important; }
-    .imgwrap{ grid-template-columns: 1fr !important; }
-    .card{ width: 100%; }
-
-
-    /* === Tony 요청: PC에서도 무조건 1열(세로 스크롤)로 강제 === */
-    .grid{ grid-template-columns: 1fr !important; }
-    .row{ grid-template-columns: 1fr !important; }
-    .row.cols2, .row.cols3{ grid-template-columns: 1fr !important; }
-    .span2{ grid-column: auto !important; }
-
-    @media (min-width: 520px){
-      .row.cols2, .row.cols3{ grid-template-columns: 1fr !important; }
-    }
-    @media (min-width: 960px){
-      .grid{ grid-template-columns: 1fr !important; }
-      .span2{ grid-column: auto !important; }
-    }
-
-</style>
+  </style>
 </head>
 
 <body>
@@ -226,19 +195,14 @@
         <div class="chip">ENVEA</div>
         <div class="chip">Pipe reduction</div>
       </div>
-        <div class="chip">DustTrack</div>
-        <div class="chip">가스농도</div>
-        <div class="chip">유량단위</div>
-        <div class="chip">ENVEA 계산</div>
-      </div>
     </div>
 
     <div class="grid">
 
-<!-- 1) 질량농도 -->
+      <!-- 1) 질량농도 -->
       <div class="card">
-        <h2>1 질량농도환산 환산 <span class="badge">ug/m3 mg/m3 g/m3</span></h2>
-        <div class="row cols2">
+        <h2>1 질량농도환산 <span class="badge">ug/m3 mg/m3 g/m3</span></h2>
+        <div class="row">
           <div>
             <label>입력값</label>
             <input id="m_in" type="number" step="any" value="100">
@@ -252,7 +216,7 @@
             </select>
           </div>
         </div>
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>결과 ug/m3</label>
             <div class="out" id="m_out_ug">-</div>
@@ -269,14 +233,14 @@
         <div class="hint">1 g/m3 는 1000 mg/m3 와 같습니다</div>
       </div>
 
-<!-- 3) 가스농도 + 표준조건/운전조건 + 압력단위환산 -->
+      <!-- 2) 가스농도 -->
       <div class="card">
         <h2>2 가스농도 환산 <span class="badge">ppm vol% mg/m3</span></h2>
         <div class="hint">
-          ppm 과 부피퍼센트는 조건과 무관합니다 mg/m3 변환은 온도 압력 조건에 따라 바뀝니다
+          ppm 과 부피퍼센트는 조건과 무관합니다. mg/m3 변환은 온도·압력 조건에 따라 바뀝니다.
         </div>
 
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>가스 선택</label>
             <select id="g_gas">
@@ -293,7 +257,7 @@
             </select>
           </div>
           <div>
-            <label>분자량 MW g/mol</label>
+            <label>분자량 MW (g/mol)</label>
             <input id="g_mw" type="number" step="any" value="64.066" />
             <div class="hint">직접입력 선택 시 수정 가능</div>
           </div>
@@ -308,13 +272,13 @@
 
         <div class="divider"></div>
 
-        <div class="row cols3">
+        <div class="row">
           <div>
-            <label>표준 온도 도</label>
+            <label>표준 온도 (°C)</label>
             <select id="g_Tref">
-              <option value="0" selected>0 도</option>
-              <option value="20">20 도</option>
-              <option value="25">25 도</option>
+              <option value="0" selected>0</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
             </select>
           </div>
           <div>
@@ -334,9 +298,9 @@
           </div>
         </div>
 
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>운전 온도 도</label>
+            <label>운전 온도 (°C)</label>
             <input id="g_Tact" type="number" step="any" value="120">
           </div>
           <div>
@@ -356,7 +320,7 @@
           </div>
         </div>
 
-        <div class="row cols1" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>현재 적용 조건</label>
             <div class="out" id="g_condOut">-</div>
@@ -365,7 +329,7 @@
 
         <div class="divider"></div>
 
-        <div class="row cols2">
+        <div class="row">
           <div>
             <label>입력값</label>
             <input id="g_val" type="number" step="any" value="100" />
@@ -380,7 +344,7 @@
           </div>
         </div>
 
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>결과 ppm</label>
             <div class="out" id="g_out_ppm">-</div>
@@ -398,16 +362,16 @@
         <div class="warn" id="g_warn"></div>
 
         <div class="hint mono" style="margin-top:10px">
-          mg/m3 = ppm * MW * P(Pa) / (R * T(K)) * 1e-3
-          ppm = mg/m3 * (R * T(K)) / (MW * P(Pa)) * 1e3
+          mg/m3 = ppm × MW × P(Pa) / (R × T(K)) × 1e-3<br/>
+          ppm = mg/m3 × (R × T(K)) / (MW × P(Pa)) × 1e3<br/>
           부피퍼센트 = ppm / 10000
         </div>
       </div>
 
-<!-- 3) 압력 단위 환산 -->
+      <!-- 3) 압력 단위 환산 -->
       <div class="card">
         <h2>3 압력단위 환산 <span class="badge">Pa kPa bar mbar atm mmHg</span></h2>
-        <div class="row cols3">
+        <div class="row">
           <div>
             <label>입력 압력</label>
             <input id="p_in" type="number" step="any" value="101.325">
@@ -435,7 +399,7 @@
             </select>
           </div>
         </div>
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>결과</label>
             <div class="out big" id="p_out">-</div>
@@ -448,10 +412,10 @@
         <div class="hint">가스농도 환산에서 사용되는 압력도 같은 로직으로 Pa로 내부 환산됩니다</div>
       </div>
 
-<!-- 4) 유량 단위 -->
+      <!-- 4) 유량 단위 -->
       <div class="card">
         <h2>4 유량단위 환산 <span class="badge">m3/h L/min Nm3/h NL/min</span></h2>
-        <div class="row cols2">
+        <div class="row">
           <div>
             <label>입력값</label>
             <input id="f_in" type="number" step="any" value="100">
@@ -467,7 +431,7 @@
           </div>
         </div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>결과 m3/h</label>
             <div class="out" id="f_out_m3h">-</div>
@@ -486,34 +450,34 @@
           </div>
         </div>
 
-        <div class="hint">여기 Nm3 표시는 단위 스케일 환산입니다 실제 운전조건 보정은 5번에서 계산하세요</div>
+        <div class="hint">여기 Nm3 표시는 단위 스케일 환산입니다. 실제 운전조건 보정은 6번에서 계산하세요.</div>
       </div>
 
-<!-- 2) DustTrack -->
-      <div class="card span2">
+      <!-- 5) DustTrack -->
+      <div class="card">
         <h2>5 DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
-        <div class="row cols4">
+        <div class="row">
           <div>
-            <label>필터 전 무게 mg</label>
+            <label>필터 전 무게 (mg)</label>
             <input id="d_pre" type="number" step="any" value="74.022">
           </div>
           <div>
-            <label>필터 후 무게 mg</label>
+            <label>필터 후 무게 (mg)</label>
             <input id="d_post" type="number" step="any" value="89.195">
           </div>
           <div>
-            <label>샘플 유량 L/min</label>
+            <label>샘플 유량 (L/min)</label>
             <input id="d_flow_lmin" type="number" step="any" value="1">
           </div>
           <div>
-            <label>샘플 시간 min</label>
+            <label>샘플 시간 (min)</label>
             <input id="d_time_min" type="number" step="any" value="1305">
           </div>
         </div>
 
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>DustTrack 평균 농도 mg/m3</label>
+            <label>DustTrack 평균 농도 (mg/m3)</label>
             <input id="d_dt_avg" type="number" step="any" value="12.6">
           </div>
           <div>
@@ -526,33 +490,32 @@
           </div>
         </div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>무게 증가량 mg</label>
+            <label>무게 증가량 (mg)</label>
             <div class="out" id="d_gain_mg">-</div>
           </div>
           <div>
-            <label>유량 m3/min</label>
+            <label>유량 (m3/min)</label>
             <div class="out" id="d_flow_m3min">-</div>
           </div>
           <div>
-            <label>총 부피 m3</label>
+            <label>총 부피 (m3)</label>
             <div class="out" id="d_total_m3">-</div>
           </div>
           <div>
-            <label>기준 농도 mg/m3</label>
+            <label>기준 농도 (mg/m3)</label>
             <div class="out" id="d_ref_mgm3">-</div>
           </div>
         </div>
         <div class="warn" id="d_warn"></div>
       </div>
 
-<!-- 6) 유량 보정 -->
-      <div class="card span2">
+      <!-- 6) 유량 보정 -->
+      <div class="card">
         <h2>6 유량보정 <span class="badge">Actual ↔ Normal</span></h2>
-<!-- 5-1 Actual Normal -->
-        <div class="hint">Actual은 운전조건 유량 Normal은 기준조건 보정 유량입니다</div>
-        <div class="row cols4" style="margin-top:10px">
+        <div class="hint">Actual은 운전조건 유량, Normal은 기준조건 보정 유량입니다.</div>
+        <div class="row" style="margin-top:10px">
           <div>
             <label>입력 유량</label>
             <input id="pt_in" type="number" step="any" value="1000">
@@ -560,26 +523,26 @@
           <div>
             <label>변환 방향</label>
             <select id="pt_mode">
-              <option value="A2N" selected>Actual m3/h → Normal Nm3/h</option>
-              <option value="N2A">Normal Nm3/h → Actual m3/h</option>
+              <option value="A2N" selected>Actual (m3/h) → Normal (Nm3/h)</option>
+              <option value="N2A">Normal (Nm3/h) → Actual (m3/h)</option>
             </select>
           </div>
           <div>
-            <label>운전 온도 Ta 도</label>
+            <label>운전 온도 Ta (°C)</label>
             <input id="pt_Ta" type="number" step="any" value="120">
           </div>
           <div>
-            <label>운전 압력 Pa / kPa 절대압</label>
+            <label>운전 압력 Pa (kPa 절대압)</label>
             <input id="pt_Pa" type="number" step="any" value="101.325">
           </div>
         </div>
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>기준 온도 Tn 도</label>
+            <label>기준 온도 Tn (°C)</label>
             <input id="pt_Tn" type="number" step="any" value="0">
           </div>
           <div>
-            <label>기준 압력 Pn kPa 절대압</label>
+            <label>기준 압력 Pn (kPa 절대압)</label>
             <input id="pt_Pn" type="number" step="any" value="101.325">
           </div>
           <div>
@@ -591,46 +554,40 @@
             <div class="out mono" id="pt_formula">-</div>
           </div>
         </div>
-
-        <div class="divider"></div>
-
-        
       </div>
 
-<!-- 7) 유량 계산 -->
-      <div class="card span2">
+      <!-- 7) 유량 계산 -->
+      <div class="card">
         <h2>7 유량 계산 <span class="badge">단면적 × 유속 × 밀도</span></h2>
-<!-- 5-2 Q=A×V, m=ρ×Q -->
-        <h3 style="margin:0 0 8px;font-size:14px;">유량 계산 단면적 유속 밀도</h3>
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>형상</label>
             <select id="fc_shape">
-              <option value="circular" selected>원형 지름 D</option>
-              <option value="rect">사각 폭 W 높이 H</option>
+              <option value="circular" selected>원형 (지름 D)</option>
+              <option value="rect">사각 (폭 W × 높이 H)</option>
             </select>
           </div>
           <div>
-            <label>지름 D mm</label>
+            <label>지름 D (mm)</label>
             <input id="fc_D_mm" type="number" step="any" value="100">
           </div>
           <div>
-            <label>폭 W mm</label>
+            <label>폭 W (mm)</label>
             <input id="fc_W_mm" type="number" step="any" value="200" disabled>
           </div>
           <div>
-            <label>높이 H mm</label>
+            <label>높이 H (mm)</label>
             <input id="fc_H_mm" type="number" step="any" value="200" disabled>
           </div>
         </div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>유속 V m/s</label>
+            <label>유속 V (m/s)</label>
             <input id="fc_V_ms" type="number" step="any" value="10">
           </div>
           <div>
-            <label>밀도 rho kg/m3</label>
+            <label>밀도 ρ (kg/m3)</label>
             <input id="fc_rho" type="number" step="any" value="1.204">
           </div>
           <div>
@@ -643,7 +600,7 @@
           </div>
         </div>
 
-        <div class="row cols2" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
             <label>단면적 A</label>
             <div class="out mono" id="fc_A_out">-</div>
@@ -655,63 +612,57 @@
         </div>
 
         <div class="warn" id="fc_warn"></div>
-
-        <div class="divider"></div>
-
-        
       </div>
 
-<!-- 8) ENVEA 유량농도환산 -->
-      <div class="card span2">
+      <!-- 8) ENVEA 유량농도환산 -->
+      <div class="card">
         <h2>8 MaxxFlow / SolidFlow / PicoFlow 유량농도환산 <span class="badge">ENVEA 계산 시트</span></h2>
-<!-- 5-3 ENVEA 계산 (이전과 동일 UI/JS) -->
-        <h3 style="margin:0 0 8px;font-size:14px;">ENVEA 계산 시트 농도 계산 MaxxFlow SolidFlow PicoFlow</h3>
-        <div class="hint">엑셀 Calculation of parameters 시트 수식을 그대로 적용합니다</div>
+        <div class="hint">엑셀 Calculation of parameters 시트 수식을 그대로 적용합니다.</div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>벌크밀도 kg/m3</label>
+            <label>벌크밀도 (kg/m3)</label>
             <input id="en_bulk" type="number" step="any" value="1200">
           </div>
           <div>
-            <label>파이프 직경 mm</label>
+            <label>파이프 직경 (mm)</label>
             <input id="en_D_mm" type="number" step="any" value="200">
           </div>
           <div>
-            <label>이송량 kg/h</label>
+            <label>이송량 (kg/h)</label>
             <input id="en_mdot_kgh" type="number" step="any" value="200000">
           </div>
           <div>
             <label>계산 모드</label>
             <select id="en_mode">
               <option value="freefall" selected>MaxxFlow 자유낙하</option>
-              <option value="pneumatic">SolidFlow PicoFlow 공압이송</option>
+              <option value="pneumatic">SolidFlow / PicoFlow 공압이송</option>
             </select>
           </div>
         </div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>낙하 높이 mm</label>
+            <label>낙하 높이 (mm)</label>
             <input id="en_fall_mm" type="number" step="any" value="500">
           </div>
           <div>
-            <label>공압이송 유속 m/s</label>
+            <label>공압이송 유속 (m/s)</label>
             <input id="en_vel_ms" type="number" step="any" value="14.2" disabled>
           </div>
           <div>
-            <label>공기유량 Nm3/h</label>
+            <label>공기유량 (Nm3/h)</label>
             <input id="en_air_Nm3h" type="number" step="any" value="30000" disabled>
           </div>
           <div>
-            <label>공기 압력 bar</label>
+            <label>공기 압력 (bar)</label>
             <input id="en_air_bar" type="number" step="any" value="1.013" disabled>
           </div>
         </div>
 
-        <div class="row cols4" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>공기 온도 도</label>
+            <label>공기 온도 (°C)</label>
             <input id="en_air_Tc" type="number" step="any" value="15" disabled>
           </div>
           <div>
@@ -722,60 +673,54 @@
             </select>
           </div>
           <div>
-            <label>계산된 유속 m/s</label>
+            <label>계산된 유속 (m/s)</label>
             <div class="out" id="en_vel_out">-</div>
           </div>
           <div>
-            <label>계산된 공기유량 m3/h</label>
+            <label>계산된 공기유량 (m3/h)</label>
             <div class="out" id="en_air_m3h">-</div>
           </div>
         </div>
 
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>농도 g/m3</label>
+            <label>농도 (g/m3)</label>
             <div class="out big" id="en_conc_gm3">-</div>
           </div>
           <div>
-            <label>농도 kg/m3</label>
+            <label>농도 (kg/m3)</label>
             <div class="out" id="en_conc_kgm3">-</div>
           </div>
           <div>
-            <label>농도 퍼센트</label>
+            <label>농도 (%)</label>
             <div class="out" id="en_conc_pct">-</div>
           </div>
         </div>
 
         <div class="warn" id="en_warn"></div>
-
-        <div class="divider"></div>
-
-        
       </div>
 
-<!-- 9) MaxxFlow 파이프 레듀싱 사이즈 계산 -->
-      <div class="card span2">
+      <!-- 9) Pipe reduction -->
+      <div class="card">
         <h2>9 MaxxFlow 파이프 레듀싱 사이즈 계산 <span class="badge">Pipe reduction</span></h2>
-<!-- 5-4 Pipe reduction -->
-        <h3 style="margin:0 0 8px;font-size:14px;">레듀싱 높이 계산</h3>
-        <div class="row cols3" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>입구 직경 mm</label>
+            <label>입구 직경 (mm)</label>
             <input id="pr_inlet_mm" type="number" step="any" value="500">
           </div>
           <div>
-            <label>MaxxFlow 직경 mm</label>
+            <label>MaxxFlow 직경 (mm)</label>
             <input id="pr_mx_mm" type="number" step="any" value="200">
           </div>
           <div>
-            <label>벽 각도 도</label>
+            <label>벽 각도 (°)</label>
             <input id="pr_angle_deg" type="number" step="any" value="70">
           </div>
         </div>
 
-        <div class="row cols2" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
           <div>
-            <label>탭1 높이 mm</label>
+            <label>탭1 높이 (mm)</label>
             <div class="out big" id="pr_height_mm">-</div>
           </div>
           <div>
@@ -787,20 +732,19 @@
         <div class="imgwrap" style="margin-top:10px">
           <div class="imgbox">
             <img alt="Pipe reduction 도면" src="./pipe_reduction_img1.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img1.png 또는 pipe_reduction_img2.png</div>
+            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img1.png</div>
           </div>
           <div class="imgbox">
             <img alt="Pipe reduction 예시" src="./pipe_reduction_img2.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
-            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img1.png 또는 pipe_reduction_img2.png</div>
+            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img2.png</div>
           </div>
         </div>
 
         <div class="warn" id="pr_warn"></div>
       </div>
-    
-      </div>
 
-    </div>
+    </div><!-- /.grid -->
+  </div><!-- /.wrap -->
 
 <script>
 (() => {
@@ -830,12 +774,12 @@
     else if (u === "g") mg = v * 1000;
     else mg = NaN;
 
-    $("m_out_ug").textContent = `${fmt(mg * 1000)} ug m3`;
-    $("m_out_mg").textContent = `${fmt(mg)} mg m3`;
-    $("m_out_g").textContent  = `${fmt(mg / 1000, 9)} g m3`;
+    $("m_out_ug").textContent = `${fmt(mg * 1000)} ug/m3`;
+    $("m_out_mg").textContent = `${fmt(mg)} mg/m3`;
+    $("m_out_g").textContent  = `${fmt(mg / 1000, 9)} g/m3`;
   }
 
-  // 2) DustTrack
+  // 5) DustTrack
   function recalcDust(){
     const pre = num($("d_pre").value);
     const post = num($("d_post").value);
@@ -875,17 +819,17 @@
       return;
     }
 
-    const ref = gain / totalM3;
+    const ref = gain / totalM3; // mg/m3
     const newFactor = (ref / dtAvg) * curFactor;
 
     $("d_gain_mg").textContent = `${fmt(gain)} mg`;
-    $("d_flow_m3min").textContent = `${fmt(flowM3Min, 9)} m3 min`;
+    $("d_flow_m3min").textContent = `${fmt(flowM3Min, 9)} m3/min`;
     $("d_total_m3").textContent = `${fmt(totalM3)} m3`;
-    $("d_ref_mgm3").textContent = `${fmt(ref)} mg m3`;
+    $("d_ref_mgm3").textContent = `${fmt(ref)} mg/m3`;
     $("d_new_factor").textContent = fmt(newFactor);
   }
 
-  // 3) 가스농도 + 조건 선택 + 압력단위환산
+  // 2) 가스농도
   const GAS_DB = {
     SO2:{mw:64.066}, NO2:{mw:46.0055}, NO:{mw:30.006}, CO:{mw:28.01},
     CO2:{mw:44.0095}, O2:{mw:31.998}, NH3:{mw:17.031}, H2S:{mw:34.081}, CH4:{mw:16.043},
@@ -903,14 +847,13 @@
       case "mmHg": return value * 133.322;
       default:     return NaN;
     }
-  
+  }
   function fromPa(pa, unit){
     if (!isNum(pa)) return NaN;
     const k = toPa(1, unit);
     if (!isNum(k) || k===0) return NaN;
     return pa / k;
   }
-}
 
   function setGasMW(){
     const pick = $("g_gas").value;
@@ -927,22 +870,18 @@
     const MW = num($("g_mw").value); // g/mol
     const mode = $("g_condMode").value;
 
-    // 표준 조건
     const TrefC = num($("g_Tref").value);
     const PrefV = num($("g_Pref").value);
     const PrefUnit = $("g_Punit").value;
 
-    // 운전 조건
     const TactC = num($("g_Tact").value);
     const PactV = num($("g_Pact").value);
     const PactUnit = $("g_PactUnit").value;
 
-    // 적용 조건 결정
     const Tc = (mode === "act") ? TactC : TrefC;
     const PPa = (mode === "act") ? toPa(PactV, PactUnit) : toPa(PrefV, PrefUnit);
 
-    $("g_Pout").textContent = isNum(PPa) ? `${fmt(PPa)} Pa  |  ${fmt(PPa/1000)} kPa` : "-";
-    $("g_condOut").textContent = (isNum(Tc) && isNum(PPa)) ? `${fmt(Tc)} 도  ${fmt(PPa/1000)} kPa 기준` : "-";
+    $("g_condOut").textContent = (isNum(Tc) && isNum(PPa)) ? `${fmt(Tc)} °C / ${fmt(PPa/1000)} kPa 적용` : "-";
 
     const unit = $("g_unit").value;
     const v = num($("g_val").value);
@@ -971,7 +910,6 @@
 
     const TK = Tc + 273.15;
 
-    // ppm ↔ mg/m3 (이상기체, 선택된 조건 적용)
     let ppm;
     if (unit === "ppm") ppm = v;
     else if (unit === "volpct") ppm = v * 10000.0;
@@ -982,12 +920,10 @@
 
     $("g_out_ppm").textContent = `${fmt(ppm)} ppm`;
     $("g_out_volpct").textContent = `${fmt(volpct, 9)} %`;
-    $("g_out_mgm3").textContent = `${fmt(mgm3)} mg m3`;
+    $("g_out_mgm3").textContent = `${fmt(mgm3)} mg/m3`;
   }
 
-  // 4) 유량 단위
-  const K = 16.6666666667;
-  
+  // 3) 압력
   function recalcPressure(){
     const v = num($("p_in").value);
     const from = $("p_from").value;
@@ -997,24 +933,27 @@
     const out = fromPa(pa, to);
     $("p_out").textContent = fmt(out, 6) + " " + to;
   }
-function recalcFlow(){
+
+  // 4) 유량 단위
+  const K = 16.6666666667; // 1 m3/h = 16.666... L/min
+  function recalcFlow(){
     const v = num($("f_in").value);
     const u = $("f_unit").value;
 
     let m3h = NaN;
     if (u === "m3h") m3h = v;
     else if (u === "lmin") m3h = v / K;
-    else if (u === "nm3h") m3h = v;
-    else if (u === "nlmin") m3h = v / K;
+    else if (u === "nm3h") m3h = v;      // 스케일만
+    else if (u === "nlmin") m3h = v / K; // 스케일만
 
     const lmin = m3h * K;
-    $("f_out_m3h").textContent  = `${fmt(m3h)} m3 h`;
-    $("f_out_lmin").textContent = `${fmt(lmin)} L min`;
-    $("f_out_nm3h").textContent = `${fmt(m3h)} Nm3 h`;
-    $("f_out_nlmin").textContent= `${fmt(lmin)} NL min`;
+    $("f_out_m3h").textContent  = `${fmt(m3h)} m3/h`;
+    $("f_out_lmin").textContent = `${fmt(lmin)} L/min`;
+    $("f_out_nm3h").textContent = `${fmt(m3h)} Nm3/h`;
+    $("f_out_nlmin").textContent= `${fmt(lmin)} NL/min`;
   }
 
-  // 5-1) Actual ↔ Normal
+  // 6) Actual ↔ Normal
   function recalcPT(){
     const Qin  = num($("pt_in").value);
     const mode = $("pt_mode").value;
@@ -1028,23 +967,23 @@ function recalcFlow(){
 
     if (![Qin, TaK, Pa, TnK, Pn].every(isNum) || TaK <= 0 || TnK <= 0 || Pa <= 0 || Pn <= 0){
       $("pt_out").textContent = "-";
-      $("pt_formula").textContent = "Qn = Qa * (Pa/Pn) * (TnK/TaK)";
+      $("pt_formula").textContent = "Qn = Qa × (Pa/Pn) × (TnK/TaK)";
       return;
     }
 
     let out;
     if (mode === "A2N"){
       out = Qin * (Pa / Pn) * (TnK / TaK);
-      $("pt_out").textContent = `${fmt(out)} Nm3 h`;
-      $("pt_formula").textContent = `Qn = Qa * (${fmt(Pa,4)}/${fmt(Pn,4)}) * (${fmt(TnK,4)}/${fmt(TaK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} Nm3/h`;
+      $("pt_formula").textContent = `Qn = Qa × (${fmt(Pa,4)}/${fmt(Pn,4)}) × (${fmt(TnK,4)}/${fmt(TaK,4)})`;
     } else {
       out = Qin * (Pn / Pa) * (TaK / TnK);
-      $("pt_out").textContent = `${fmt(out)} m3 h`;
-      $("pt_formula").textContent = `Qa = Qn * (${fmt(Pn,4)}/${fmt(Pa,4)}) * (${fmt(TaK,4)}/${fmt(TnK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} m3/h`;
+      $("pt_formula").textContent = `Qa = Qn × (${fmt(Pn,4)}/${fmt(Pa,4)}) × (${fmt(TaK,4)}/${fmt(TnK,4)})`;
     }
   }
 
-  // 5-2) 유량 계산
+  // 7) 유량 계산
   function fc_updateShapeUI(){
     const shape = $("fc_shape").value;
     const isCirc = (shape === "circular");
@@ -1080,7 +1019,7 @@ function recalcFlow(){
       }
       const D = Dmm / 1000.0;
       A = Math.PI * (D*D) / 4.0;
-      $("fc_formula_out").textContent = "A = pi * D2 / 4  Q = A * V  질량유량 = rho * Q";
+      $("fc_formula_out").textContent = "A = π×D²/4,  Q = A×V,  질량유량 = ρ×Q";
     } else {
       const Wmm = num($("fc_W_mm").value);
       const Hmm = num($("fc_H_mm").value);
@@ -1092,7 +1031,7 @@ function recalcFlow(){
       const W = Wmm / 1000.0;
       const H = Hmm / 1000.0;
       A = W * H;
-      $("fc_formula_out").textContent = "A = W * H  Q = A * V  질량유량 = rho * Q";
+      $("fc_formula_out").textContent = "A = W×H,  Q = A×V,  질량유량 = ρ×Q";
     }
 
     const Q_m3s = A * V;
@@ -1100,12 +1039,12 @@ function recalcFlow(){
     const mdot_kg_s = rho * Q_m3s;
     const mdot_kg_h = mdot_kg_s * 3600.0;
 
-    $("fc_A_out").textContent = `${fmt(A, 9)} m2`;
-    $("fc_Q_out").textContent = `${fmt(Q_m3s)} m3 s  |  ${fmt(Q_m3h)} m3 h`;
-    $("fc_mdot_out").textContent = `${fmt(mdot_kg_s)} kg s  |  ${fmt(mdot_kg_h)} kg h`;
+    $("fc_A_out").textContent = `${fmt(A, 9)} m²`;
+    $("fc_Q_out").textContent = `${fmt(Q_m3s)} m3/s  |  ${fmt(Q_m3h)} m3/h`;
+    $("fc_mdot_out").textContent = `${fmt(mdot_kg_s)} kg/s  |  ${fmt(mdot_kg_h)} kg/h`;
   }
 
-  // 5-3 ENVEA 계산 (이전 로직 유지)
+  // 8) ENVEA 계산
   function en_updateModeUI(){
     const mode = $("en_mode").value;
     const isFree = (mode === "freefall");
@@ -1173,11 +1112,12 @@ function recalcFlow(){
         const Tc = num($("en_air_Tc").value);
 
         if (![Nm3h, Pbar, Tc].every(isNum) || Nm3h <= 0 || Pbar <= 0){
-          warn.textContent = "공기유량 Nm3 h, 압력 bar 는 0보다 커야 합니다";
+          warn.textContent = "공기유량(Nm3/h), 압력(bar)은 0보다 커야 합니다";
           warn.style.display = "block";
           return;
         }
 
+        // 원본 로직 유지 (스케일 보정)
         air_m3h = (Nm3h/3600.0) * 1.01325 * (Tc + 273.15) / Pbar / 288.15 * 3600.0;
         vel = air_m3h / (A * 3600.0);
       }
@@ -1195,14 +1135,14 @@ function recalcFlow(){
     const frac = mdot_kgh / (A * vel * 3600.0 * bulk);
     const pct = frac * 100.0;
 
-    $("en_vel_out").textContent = `${fmt(vel)} m s`;
-    $("en_air_m3h").textContent = `${fmt(air_m3h)} m3 h`;
-    $("en_conc_gm3").textContent = `${fmt(conc_gm3)} g m3`;
-    $("en_conc_kgm3").textContent = `${fmt(conc_kgm3, 9)} kg m3`;
+    $("en_vel_out").textContent = `${fmt(vel)} m/s`;
+    $("en_air_m3h").textContent = `${fmt(air_m3h)} m3/h`;
+    $("en_conc_gm3").textContent = `${fmt(conc_gm3)} g/m3`;
+    $("en_conc_kgm3").textContent = `${fmt(conc_kgm3, 9)} kg/m3`;
     $("en_conc_pct").textContent = `${fmt(pct, 9)} %`;
   }
 
-  // 5-4 Pipe reduction
+  // 9) Pipe reduction
   function recalcPipeReduction(){
     const inlet = num($("pr_inlet_mm").value);
     const mx = num($("pr_mx_mm").value);
@@ -1225,18 +1165,15 @@ function recalcFlow(){
     }
     const rad = ang / 180.0 * Math.PI;
     if (ang <= 0 || ang >= 89.9){
-      warn.textContent = "벽 각도는 0도 초과 89.9도 미만으로 입력하세요";
+      warn.textContent = "벽 각도는 0° 초과 89.9° 미만으로 입력하세요";
       warn.style.display = "block";
       $("pr_height_mm").textContent = "-";
-      if ($("pr_height2_mm")) $("pr_height2_mm").textContent = "-";
       $("pr_note").textContent = "각도를 조정하세요";
       return;
     }
     const h1 = 0.5 * (inlet - mx) * Math.tan(rad);
-    const h2 = 0.5 * (inlet - mx) / Math.tan(rad);
     $("pr_height_mm").textContent = `${fmt(h1,0)} mm`;
-    if ($("pr_height2_mm")) $("pr_height2_mm").textContent = `${fmt(h2,0)} mm`;
-    $("pr_note").textContent = (ang < 60) ? "엑셀 참고: 최소 권장 각도는 60도" : "권장 범위";
+    $("pr_note").textContent = (ang < 60) ? "참고: 최소 권장 각도는 60°" : "권장 범위";
   }
 
   function resetAll(){
@@ -1335,6 +1272,10 @@ function recalcFlow(){
     $("f_in").addEventListener(ev, recalcFlow);
     $("f_unit").addEventListener(ev, recalcFlow);
 
+    $("p_in").addEventListener(ev, recalcPressure);
+    $("p_from").addEventListener(ev, recalcPressure);
+    $("p_to").addEventListener(ev, recalcPressure);
+
     $("pt_in").addEventListener(ev, recalcPT);
     $("pt_mode").addEventListener(ev, recalcPT);
     $("pt_Ta").addEventListener(ev, recalcPT);
@@ -1378,4 +1319,5 @@ function recalcFlow(){
 </script>
 </body>
 </html>
+
 
