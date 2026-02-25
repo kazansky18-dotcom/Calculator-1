@@ -20,7 +20,7 @@
       --radius: 16px;
     }
     *{box-sizing:border-box}
-    body{
+    body{overflow-x:hidden;
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
       color:var(--ink);
@@ -28,7 +28,7 @@
                   radial-gradient(900px 500px at 110% 10%, rgba(11,116,200,.12), transparent 55%),
                   var(--bg);
     }
-    .wrap{max-width:1120px; margin:0 auto; padding:22px 16px 48px;}
+    .wrap{max-width:980px; margin:32px auto; padding:22px 16px 48px;}
     .topbar{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px; padding:14px 16px; background:rgba(255,255,255,.75);
@@ -175,6 +175,21 @@
     .row.cols2, .row.cols3, .row.cols4{ grid-template-columns: 1fr !important; }
     .imgwrap{ grid-template-columns: 1fr !important; }
     .card{ width: 100%; }
+
+
+    /* === Tony 요청: PC에서도 무조건 1열(세로 스크롤)로 강제 === */
+    .grid{ grid-template-columns: 1fr !important; }
+    .row{ grid-template-columns: 1fr !important; }
+    .row.cols2, .row.cols3{ grid-template-columns: 1fr !important; }
+    .span2{ grid-column: auto !important; }
+
+    @media (min-width: 520px){
+      .row.cols2, .row.cols3{ grid-template-columns: 1fr !important; }
+    }
+    @media (min-width: 960px){
+      .grid{ grid-template-columns: 1fr !important; }
+      .span2{ grid-column: auto !important; }
+    }
 
 </style>
 </head>
@@ -1363,3 +1378,4 @@ function recalcFlow(){
 </script>
 </body>
 </html>
+
