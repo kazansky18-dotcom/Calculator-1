@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="가스 먼지 농도 유량 단위환산 계산기 이앤인스트루먼트" />
-  <title>가스 먼지 농도 유량 단위환산 계산기</title>
+  <title>가스 먼지 농도 단위환산 & 유량 계산기</title>
 
   <style>
     :root{
@@ -180,7 +180,7 @@
     </div>
 
     <div class="hero">
-      <h1>가스 먼지 농도 유량 단위환산 계산기</h1>
+      <h1>가스 먼지 농도 단위환산 유량 계산기</h1>
       <p class="lead">
         1 질량농도환산 → 2 가스농도환산 → 3 압력단위환산 → 4 유량단위환산 → 5 DustTrack 중량 팩터 → 6 유량보정 → 7 유량 계산 → 8 MaxxFlow / SolidFlow / PicoFlow 유량농도환산 → 9 MaxxFlow 파이프 레듀싱 사이즈 계산
       </p>
@@ -201,7 +201,7 @@
 
       <!-- 1) 질량농도 -->
       <div class="card">
-        <h2>1 질량농도환산 <span class="badge">ug/m3 mg/m3 g/m3</span></h2>
+        <h2>1. 질량농도환산 <span class="badge">ug/m3 mg/m3 g/m3</span></h2>
         <div class="row">
           <div>
             <label>입력값</label>
@@ -235,7 +235,7 @@
 
       <!-- 2) 가스농도 -->
       <div class="card">
-        <h2>2 가스농도 환산 <span class="badge">ppm vol% mg/m3</span></h2>
+        <h2>2. 가스농도 환산 <span class="badge">ppm vol% mg/m3</span></h2>
         <div class="hint">
           ppm 과 부피퍼센트는 조건과 무관합니다. mg/m3 변환은 온도·압력 조건에 따라 바뀝니다.
         </div>
@@ -370,7 +370,7 @@
 
       <!-- 3) 압력 단위 환산 -->
       <div class="card">
-        <h2>3 압력단위 환산 <span class="badge">Pa kPa bar mbar atm mmHg</span></h2>
+        <h2>3. 압력단위 환산 <span class="badge">Pa kPa bar mbar atm mmHg</span></h2>
         <div class="row">
           <div>
             <label>입력 압력</label>
@@ -414,7 +414,7 @@
 
       <!-- 4) 유량 단위 -->
       <div class="card">
-        <h2>4 유량단위 환산 <span class="badge">m3/h L/min Nm3/h NL/min</span></h2>
+        <h2>4. 유량단위 환산 <span class="badge">m3/h L/min Nm3/h NL/min</span></h2>
         <div class="row">
           <div>
             <label>입력값</label>
@@ -455,7 +455,7 @@
 
       <!-- 5) DustTrack -->
       <div class="card">
-        <h2>5 DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
+        <h2>5. DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
         <div class="row">
           <div>
             <label>필터 전 무게 (mg)</label>
@@ -513,7 +513,7 @@
 
       <!-- 6) 유량 보정 -->
       <div class="card">
-        <h2>6 유량보정 <span class="badge">Actual ↔ Normal</span></h2>
+        <h2>6. 유량보정 <span class="badge">Actual ↔ Normal</span></h2>
         <div class="hint">Actual은 운전조건 유량, Normal은 기준조건 보정 유량입니다.</div>
         <div class="row" style="margin-top:10px">
           <div>
@@ -558,7 +558,7 @@
 
       <!-- 7) 유량 계산 -->
       <div class="card">
-        <h2>7 유량 계산 <span class="badge">단면적 × 유속 × 밀도</span></h2>
+        <h2>7. 유량 계산 <span class="badge">단면적 × 유속 × 밀도</span></h2>
         <div class="row" style="margin-top:10px">
           <div>
             <label>형상</label>
@@ -616,8 +616,8 @@
 
       <!-- 8) ENVEA 유량농도환산 -->
       <div class="card">
-        <h2>8 MaxxFlow / SolidFlow / PicoFlow 유량농도환산 <span class="badge">ENVEA 계산 시트</span></h2>
-        <div class="hint">엑셀 Calculation of parameters 시트 수식을 그대로 적용합니다.</div>
+        <h2>8. MaxxFlow / SolidFlow / PicoFlow 유량농도환산 <span class="badge">ENVEA 계산 시트</span></h2>
+        <div class="hint"> Calculation of parameters </div>
 
         <div class="row" style="margin-top:10px">
           <div>
@@ -636,7 +636,7 @@
             <label>계산 모드</label>
             <select id="en_mode">
               <option value="freefall" selected>MaxxFlow 자유낙하</option>
-              <option value="pneumatic">SolidFlow / PicoFlow 공압이송</option>
+              <option value="pneumatic">SolidFlow / PicoFlow / DensFlow 공압이송</option>
             </select>
           </div>
         </div>
@@ -702,7 +702,7 @@
 
       <!-- 9) Pipe reduction -->
       <div class="card">
-        <h2>9 MaxxFlow 파이프 레듀싱 사이즈 계산 <span class="badge">Pipe reduction</span></h2>
+        <h2>9. MaxxFlow 파이프 레듀싱 사이즈 계산 <span class="badge">Pipe reduction</span></h2>
         <div class="row" style="margin-top:10px">
           <div>
             <label>입구 직경 (mm)</label>
