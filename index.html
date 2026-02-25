@@ -190,11 +190,19 @@
     <div class="hero">
       <h1>가스 먼지 농도 유량 단위환산 계산기</h1>
       <p class="lead">
-        1 질량농도 → 2 DustTrack 중량 팩터 → 3 가스농도(표준조건 운전조건, 압력단위 자동환산) →
-        4 유량 단위 → 5 유량 보정 및 ENVEA 계산
+        1 질량농도환산 → 2 가스농도환산 → 3 압력단위환산 → 4 유량단위환산 → 5 DustTrack 중량 팩터 → 6 유량보정 → 7 유량 계산 → 8 MaxxFlow / SolidFlow / PicoFlow 유량농도환산 → 9 MaxxFlow 파이프 레듀싱 사이즈 계산
       </p>
       <div class="chips">
         <div class="chip">질량농도</div>
+        <div class="chip">가스농도</div>
+        <div class="chip">압력단위</div>
+        <div class="chip">유량단위</div>
+        <div class="chip">DustTrack</div>
+        <div class="chip">유량보정</div>
+        <div class="chip">유량계산</div>
+        <div class="chip">ENVEA</div>
+        <div class="chip">Pipe reduction</div>
+      </div>
         <div class="chip">DustTrack</div>
         <div class="chip">가스농도</div>
         <div class="chip">유량단위</div>
@@ -204,9 +212,9 @@
 
     <div class="grid">
 
-      <!-- 1) 질량농도 -->
+<!-- 1) 질량농도 -->
       <div class="card">
-        <h2>1 질량농도 환산 <span class="badge">mg m3 g m3 ug m3</span></h2>
+        <h2>1 질량농도환산 환산 <span class="badge">ug/m3 mg/m3 g/m3</span></h2>
         <div class="row cols2">
           <div>
             <label>입력값</label>
@@ -215,92 +223,34 @@
           <div>
             <label>입력 단위</label>
             <select id="m_unit">
-              <option value="ug">ug m3</option>
-              <option value="mg" selected>mg m3</option>
-              <option value="g">g m3</option>
+              <option value="ug">ug/m3</option>
+              <option value="mg" selected>mg/m3</option>
+              <option value="g">g/m3</option>
             </select>
           </div>
         </div>
         <div class="row cols3" style="margin-top:10px">
           <div>
-            <label>결과 ug m3</label>
+            <label>결과 ug/m3</label>
             <div class="out" id="m_out_ug">-</div>
           </div>
           <div>
-            <label>결과 mg m3</label>
+            <label>결과 mg/m3</label>
             <div class="out" id="m_out_mg">-</div>
           </div>
           <div>
-            <label>결과 g m3</label>
+            <label>결과 g/m3</label>
             <div class="out" id="m_out_g">-</div>
           </div>
         </div>
-        <div class="hint">1 g m3 는 1000 mg m3 와 같습니다</div>
+        <div class="hint">1 g/m3 는 1000 mg/m3 와 같습니다</div>
       </div>
 
-      <!-- 2) DustTrack -->
-      <div class="card span2">
-        <h2>2 DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
-        <div class="row cols4">
-          <div>
-            <label>필터 전 무게 mg</label>
-            <input id="d_pre" type="number" step="any" value="74.022">
-          </div>
-          <div>
-            <label>필터 후 무게 mg</label>
-            <input id="d_post" type="number" step="any" value="89.195">
-          </div>
-          <div>
-            <label>샘플 유량 L min</label>
-            <input id="d_flow_lmin" type="number" step="any" value="1">
-          </div>
-          <div>
-            <label>샘플 시간 min</label>
-            <input id="d_time_min" type="number" step="any" value="1305">
-          </div>
-        </div>
-
-        <div class="row cols3" style="margin-top:10px">
-          <div>
-            <label>DustTrack 평균 농도 mg m3</label>
-            <input id="d_dt_avg" type="number" step="any" value="12.6">
-          </div>
-          <div>
-            <label>현재 보정 팩터</label>
-            <input id="d_cur_factor" type="number" step="any" value="1">
-          </div>
-          <div>
-            <label>새 보정 팩터</label>
-            <div class="out big" id="d_new_factor">-</div>
-          </div>
-        </div>
-
-        <div class="row cols4" style="margin-top:10px">
-          <div>
-            <label>무게 증가량 mg</label>
-            <div class="out" id="d_gain_mg">-</div>
-          </div>
-          <div>
-            <label>유량 m3 min</label>
-            <div class="out" id="d_flow_m3min">-</div>
-          </div>
-          <div>
-            <label>총 부피 m3</label>
-            <div class="out" id="d_total_m3">-</div>
-          </div>
-          <div>
-            <label>기준 농도 mg m3</label>
-            <div class="out" id="d_ref_mgm3">-</div>
-          </div>
-        </div>
-        <div class="warn" id="d_warn"></div>
-      </div>
-
-      <!-- 3) 가스농도 + 표준조건/운전조건 + 압력단위환산 -->
+<!-- 3) 가스농도 + 표준조건/운전조건 + 압력단위환산 -->
       <div class="card">
-        <h2>3 가스 농도 환산 <span class="badge">ppm 부피퍼센트 mg m3</span></h2>
+        <h2>2 가스농도 환산 <span class="badge">ppm vol% mg/m3</span></h2>
         <div class="hint">
-          ppm 과 부피퍼센트는 조건과 무관합니다 mg m3 변환은 온도 압력 조건에 따라 바뀝니다
+          ppm 과 부피퍼센트는 조건과 무관합니다 mg/m3 변환은 온도 압력 조건에 따라 바뀝니다
         </div>
 
         <div class="row cols3" style="margin-top:10px">
@@ -320,7 +270,7 @@
             </select>
           </div>
           <div>
-            <label>분자량 MW g mol</label>
+            <label>분자량 MW g/mol</label>
             <input id="g_mw" type="number" step="any" value="64.066" />
             <div class="hint">직접입력 선택 시 수정 가능</div>
           </div>
@@ -383,11 +333,7 @@
           </div>
         </div>
 
-        <div class="row cols2" style="margin-top:10px">
-          <div>
-            <label>현재 적용 압력 환산</label>
-            <div class="out" id="g_Pout">-</div>
-          </div>
+        <div class="row cols1" style="margin-top:10px">
           <div>
             <label>현재 적용 조건</label>
             <div class="out" id="g_condOut">-</div>
@@ -406,7 +352,7 @@
             <select id="g_unit">
               <option value="ppm" selected>ppm</option>
               <option value="volpct">부피퍼센트</option>
-              <option value="mgm3">mg m3</option>
+              <option value="mgm3">mg/m3</option>
             </select>
           </div>
         </div>
@@ -421,7 +367,7 @@
             <div class="out" id="g_out_volpct">-</div>
           </div>
           <div>
-            <label>결과 mg m3</label>
+            <label>결과 mg/m3</label>
             <div class="out" id="g_out_mgm3">-</div>
           </div>
         </div>
@@ -429,15 +375,59 @@
         <div class="warn" id="g_warn"></div>
 
         <div class="hint mono" style="margin-top:10px">
-          mg m3 = ppm * MW * P(Pa) / (R * T(K)) * 1e-3
-          ppm = mg m3 * (R * T(K)) / (MW * P(Pa)) * 1e3
+          mg/m3 = ppm * MW * P(Pa) / (R * T(K)) * 1e-3
+          ppm = mg/m3 * (R * T(K)) / (MW * P(Pa)) * 1e3
           부피퍼센트 = ppm / 10000
         </div>
       </div>
 
-      <!-- 4) 유량 단위 -->
+<!-- 3) 압력 단위 환산 -->
       <div class="card">
-        <h2>4 유량 단위 환산 <span class="badge">m3 h L min Nm3 h NL min</span></h2>
+        <h2>3 압력단위 환산 <span class="badge">Pa kPa bar mbar atm mmHg</span></h2>
+        <div class="row cols3">
+          <div>
+            <label>입력 압력</label>
+            <input id="p_in" type="number" step="any" value="101.325">
+          </div>
+          <div>
+            <label>입력 단위</label>
+            <select id="p_from">
+              <option value="Pa">Pa</option>
+              <option value="kPa" selected>kPa</option>
+              <option value="bar">bar</option>
+              <option value="mbar">mbar</option>
+              <option value="atm">atm</option>
+              <option value="mmHg">mmHg</option>
+            </select>
+          </div>
+          <div>
+            <label>변환 단위</label>
+            <select id="p_to">
+              <option value="Pa">Pa</option>
+              <option value="kPa">kPa</option>
+              <option value="bar">bar</option>
+              <option value="mbar">mbar</option>
+              <option value="atm" selected>atm</option>
+              <option value="mmHg">mmHg</option>
+            </select>
+          </div>
+        </div>
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>결과</label>
+            <div class="out big" id="p_out">-</div>
+          </div>
+          <div>
+            <label>기준 Pa 환산</label>
+            <div class="out" id="p_pa">-</div>
+          </div>
+        </div>
+        <div class="hint">가스농도 환산에서 사용되는 압력도 같은 로직으로 Pa로 내부 환산됩니다</div>
+      </div>
+
+<!-- 4) 유량 단위 -->
+      <div class="card">
+        <h2>4 유량단위 환산 <span class="badge">m3/h L/min Nm3/h NL/min</span></h2>
         <div class="row cols2">
           <div>
             <label>입력값</label>
@@ -446,29 +436,29 @@
           <div>
             <label>입력 단위</label>
             <select id="f_unit">
-              <option value="m3h" selected>m3 h</option>
-              <option value="lmin">L min</option>
-              <option value="nm3h">Nm3 h</option>
-              <option value="nlmin">NL min</option>
+              <option value="m3h" selected>m3/h</option>
+              <option value="lmin">L/min</option>
+              <option value="nm3h">Nm3/h</option>
+              <option value="nlmin">NL/min</option>
             </select>
           </div>
         </div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>결과 m3 h</label>
+            <label>결과 m3/h</label>
             <div class="out" id="f_out_m3h">-</div>
           </div>
           <div>
-            <label>결과 L min</label>
+            <label>결과 L/min</label>
             <div class="out" id="f_out_lmin">-</div>
           </div>
           <div>
-            <label>결과 Nm3 h</label>
+            <label>결과 Nm3/h</label>
             <div class="out" id="f_out_nm3h">-</div>
           </div>
           <div>
-            <label>결과 NL min</label>
+            <label>결과 NL/min</label>
             <div class="out" id="f_out_nlmin">-</div>
           </div>
         </div>
@@ -476,11 +466,68 @@
         <div class="hint">여기 Nm3 표시는 단위 스케일 환산입니다 실제 운전조건 보정은 5번에서 계산하세요</div>
       </div>
 
-      <!-- 5) 유량 보정 및 ENVEA 계산 (이전과 동일) -->
+<!-- 2) DustTrack -->
       <div class="card span2">
-        <h2>5 유량 보정 및 ENVEA 계산 <span class="badge">엑셀 로직 동일</span></h2>
+        <h2>5 DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
+        <div class="row cols4">
+          <div>
+            <label>필터 전 무게 mg</label>
+            <input id="d_pre" type="number" step="any" value="74.022">
+          </div>
+          <div>
+            <label>필터 후 무게 mg</label>
+            <input id="d_post" type="number" step="any" value="89.195">
+          </div>
+          <div>
+            <label>샘플 유량 L/min</label>
+            <input id="d_flow_lmin" type="number" step="any" value="1">
+          </div>
+          <div>
+            <label>샘플 시간 min</label>
+            <input id="d_time_min" type="number" step="any" value="1305">
+          </div>
+        </div>
 
-        <!-- 5-1 Actual Normal -->
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>DustTrack 평균 농도 mg/m3</label>
+            <input id="d_dt_avg" type="number" step="any" value="12.6">
+          </div>
+          <div>
+            <label>현재 보정 팩터</label>
+            <input id="d_cur_factor" type="number" step="any" value="1">
+          </div>
+          <div>
+            <label>새 보정 팩터</label>
+            <div class="out big" id="d_new_factor">-</div>
+          </div>
+        </div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>무게 증가량 mg</label>
+            <div class="out" id="d_gain_mg">-</div>
+          </div>
+          <div>
+            <label>유량 m3/min</label>
+            <div class="out" id="d_flow_m3min">-</div>
+          </div>
+          <div>
+            <label>총 부피 m3</label>
+            <div class="out" id="d_total_m3">-</div>
+          </div>
+          <div>
+            <label>기준 농도 mg/m3</label>
+            <div class="out" id="d_ref_mgm3">-</div>
+          </div>
+        </div>
+        <div class="warn" id="d_warn"></div>
+      </div>
+
+<!-- 6) 유량 보정 -->
+      <div class="card span2">
+        <h2>6 유량보정 <span class="badge">Actual ↔ Normal</span></h2>
+<!-- 5-1 Actual Normal -->
         <div class="hint">Actual은 운전조건 유량 Normal은 기준조건 보정 유량입니다</div>
         <div class="row cols4" style="margin-top:10px">
           <div>
@@ -490,8 +537,8 @@
           <div>
             <label>변환 방향</label>
             <select id="pt_mode">
-              <option value="A2N" selected>Actual m3 h → Normal Nm3 h</option>
-              <option value="N2A">Normal Nm3 h → Actual m3 h</option>
+              <option value="A2N" selected>Actual m3/h → Normal Nm3/h</option>
+              <option value="N2A">Normal Nm3/h → Actual m3/h</option>
             </select>
           </div>
           <div>
@@ -499,7 +546,7 @@
             <input id="pt_Ta" type="number" step="any" value="120">
           </div>
           <div>
-            <label>운전 압력 Pa kPa 절대압</label>
+            <label>운전 압력 Pa / kPa 절대압</label>
             <input id="pt_Pa" type="number" step="any" value="101.325">
           </div>
         </div>
@@ -524,7 +571,13 @@
 
         <div class="divider"></div>
 
-        <!-- 5-2 Q=A×V, m=ρ×Q -->
+        
+      </div>
+
+<!-- 7) 유량 계산 -->
+      <div class="card span2">
+        <h2>7 유량 계산 <span class="badge">단면적 × 유속 × 밀도</span></h2>
+<!-- 5-2 Q=A×V, m=ρ×Q -->
         <h3 style="margin:0 0 8px;font-size:14px;">유량 계산 단면적 유속 밀도</h3>
         <div class="row cols4" style="margin-top:10px">
           <div>
@@ -550,11 +603,11 @@
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>유속 V m s</label>
+            <label>유속 V m/s</label>
             <input id="fc_V_ms" type="number" step="any" value="10">
           </div>
           <div>
-            <label>밀도 rho kg m3</label>
+            <label>밀도 rho kg/m3</label>
             <input id="fc_rho" type="number" step="any" value="1.204">
           </div>
           <div>
@@ -582,13 +635,19 @@
 
         <div class="divider"></div>
 
-        <!-- 5-3 ENVEA 계산 (이전과 동일 UI/JS) -->
+        
+      </div>
+
+<!-- 8) ENVEA 유량농도환산 -->
+      <div class="card span2">
+        <h2>8 MaxxFlow / SolidFlow / PicoFlow 유량농도환산 <span class="badge">ENVEA 계산 시트</span></h2>
+<!-- 5-3 ENVEA 계산 (이전과 동일 UI/JS) -->
         <h3 style="margin:0 0 8px;font-size:14px;">ENVEA 계산 시트 농도 계산 MaxxFlow SolidFlow PicoFlow</h3>
         <div class="hint">엑셀 Calculation of parameters 시트 수식을 그대로 적용합니다</div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>벌크밀도 kg m3</label>
+            <label>벌크밀도 kg/m3</label>
             <input id="en_bulk" type="number" step="any" value="1200">
           </div>
           <div>
@@ -596,7 +655,7 @@
             <input id="en_D_mm" type="number" step="any" value="200">
           </div>
           <div>
-            <label>이송량 kg h</label>
+            <label>이송량 kg/h</label>
             <input id="en_mdot_kgh" type="number" step="any" value="200000">
           </div>
           <div>
@@ -614,11 +673,11 @@
             <input id="en_fall_mm" type="number" step="any" value="500">
           </div>
           <div>
-            <label>공압이송 유속 m s</label>
+            <label>공압이송 유속 m/s</label>
             <input id="en_vel_ms" type="number" step="any" value="14.2" disabled>
           </div>
           <div>
-            <label>공기유량 Nm3 h</label>
+            <label>공기유량 Nm3/h</label>
             <input id="en_air_Nm3h" type="number" step="any" value="30000" disabled>
           </div>
           <div>
@@ -640,22 +699,22 @@
             </select>
           </div>
           <div>
-            <label>계산된 유속 m s</label>
+            <label>계산된 유속 m/s</label>
             <div class="out" id="en_vel_out">-</div>
           </div>
           <div>
-            <label>계산된 공기유량 m3 h</label>
+            <label>계산된 공기유량 m3/h</label>
             <div class="out" id="en_air_m3h">-</div>
           </div>
         </div>
 
         <div class="row cols3" style="margin-top:10px">
           <div>
-            <label>농도 g m3</label>
+            <label>농도 g/m3</label>
             <div class="out big" id="en_conc_gm3">-</div>
           </div>
           <div>
-            <label>농도 kg m3</label>
+            <label>농도 kg/m3</label>
             <div class="out" id="en_conc_kgm3">-</div>
           </div>
           <div>
@@ -668,8 +727,14 @@
 
         <div class="divider"></div>
 
-        <!-- 5-4 Pipe reduction -->
-        <h3 style="margin:0 0 8px;font-size:14px;">Pipe reduction for MaxxFlow</h3>
+        
+      </div>
+
+<!-- 9) MaxxFlow 파이프 레듀싱 사이즈 계산 -->
+      <div class="card span2">
+        <h2>9 MaxxFlow 파이프 레듀싱 사이즈 계산 <span class="badge">Pipe reduction</span></h2>
+<!-- 5-4 Pipe reduction -->
+        <h3 style="margin:0 0 8px;font-size:14px;">레듀싱 높이 계산</h3>
         <div class="row cols3" style="margin-top:10px">
           <div>
             <label>입구 직경 mm</label>
@@ -687,7 +752,7 @@
 
         <div class="row cols2" style="margin-top:10px">
           <div>
-            <label>최소 높이 mm</label>
+            <label>탭1 높이 mm</label>
             <div class="out big" id="pr_height_mm">-</div>
           </div>
           <div>
@@ -698,17 +763,21 @@
 
         <div class="imgwrap" style="margin-top:10px">
           <div class="imgbox">
-            <img alt="Pipe reduction 도면" src="pipe_reduction_img1.png" />
+            <img alt="Pipe reduction 도면" src="./pipe_reduction_img1.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img1.png 또는 pipe_reduction_img2.png</div>
           </div>
           <div class="imgbox">
-            <img alt="Pipe reduction 예시" src="pipe_reduction_img2.png" />
+            <img alt="Pipe reduction 예시" src="./pipe_reduction_img2.png" onerror="this.style.display='none';this.nextElementSibling.style.display='block';" />
+            <div class="hint" style="display:none">이미지 파일을 같은 폴더에 업로드하세요: pipe_reduction_img1.png 또는 pipe_reduction_img2.png</div>
           </div>
         </div>
 
         <div class="warn" id="pr_warn"></div>
       </div>
+    
+      </div>
+
     </div>
-  </div>
 
 <script>
 (() => {
@@ -811,7 +880,14 @@
       case "mmHg": return value * 133.322;
       default:     return NaN;
     }
+  
+  function fromPa(pa, unit){
+    if (!isNum(pa)) return NaN;
+    const k = toPa(1, unit);
+    if (!isNum(k) || k===0) return NaN;
+    return pa / k;
   }
+}
 
   function setGasMW(){
     const pick = $("g_gas").value;
@@ -888,7 +964,17 @@
 
   // 4) 유량 단위
   const K = 16.6666666667;
-  function recalcFlow(){
+  
+  function recalcPressure(){
+    const v = num($("p_in").value);
+    const from = $("p_from").value;
+    const to = $("p_to").value;
+    const pa = toPa(v, from);
+    $("p_pa").textContent = fmt(pa, 6) + " Pa";
+    const out = fromPa(pa, to);
+    $("p_out").textContent = fmt(out, 6) + " " + to;
+  }
+function recalcFlow(){
     const v = num($("f_in").value);
     const u = $("f_unit").value;
 
@@ -1115,8 +1201,18 @@
       return;
     }
     const rad = ang / 180.0 * Math.PI;
-    const h = Math.round(0.5 * (inlet - mx) * Math.tan(rad));
-    $("pr_height_mm").textContent = `${fmt(h,0)} mm`;
+    if (ang <= 0 || ang >= 89.9){
+      warn.textContent = "벽 각도는 0도 초과 89.9도 미만으로 입력하세요";
+      warn.style.display = "block";
+      $("pr_height_mm").textContent = "-";
+      if ($("pr_height2_mm")) $("pr_height2_mm").textContent = "-";
+      $("pr_note").textContent = "각도를 조정하세요";
+      return;
+    }
+    const h1 = 0.5 * (inlet - mx) * Math.tan(rad);
+    const h2 = 0.5 * (inlet - mx) / Math.tan(rad);
+    $("pr_height_mm").textContent = `${fmt(h1,0)} mm`;
+    if ($("pr_height2_mm")) $("pr_height2_mm").textContent = `${fmt(h2,0)} mm`;
     $("pr_note").textContent = (ang < 60) ? "엑셀 참고: 최소 권장 각도는 60도" : "권장 범위";
   }
 
@@ -1135,6 +1231,8 @@
     $("g_Tact").value = 120;
     $("g_Pact").value = 101.325;
     $("g_PactUnit").value = "kPa";
+
+    $("p_in").value = 101.325; $("p_from").value = "kPa"; $("p_to").value = "atm";
     $("g_unit").value = "ppm";
     $("g_val").value = 100;
 
@@ -1179,9 +1277,10 @@
 
   function recalcAll(){
     recalcMass();
-    recalcDust();
     recalcGas();
+    recalcPressure();
     recalcFlow();
+    recalcDust();
     recalcPT();
     recalcFlowCalc();
     recalcEN();
