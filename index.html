@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="이앤인스트루먼트 단위환산 계산기 (질량농도 / DustTrack 팩터 / 가스농도 / 유량 / Actual-Normal + 유량계산)" />
-  <title>(주)이앤인스트루먼트 | 가스·먼지 농도 & 유량 단위환산 툴킷</title>
+  <meta name="description" content="가스 먼지 농도 유량 단위환산 계산기 이앤인스트루먼트" />
+  <title>가스 먼지 농도 유량 단위환산 계산기</title>
 
   <style>
     :root{
@@ -28,7 +28,6 @@
                   radial-gradient(900px 500px at 110% 10%, rgba(11,116,200,.12), transparent 55%),
                   var(--bg);
     }
-    a{color:var(--primary); text-decoration:none}
     .wrap{max-width:1120px; margin:0 auto; padding:22px 16px 48px;}
     .topbar{
       display:flex; align-items:center; justify-content:space-between;
@@ -46,7 +45,7 @@
       flex:0 0 auto;
     }
     .brandText{min-width:0}
-    .brandText .name{font-weight:900; font-size:14px; letter-spacing:.2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .brandText .name{font-weight:900; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
     .brandText .sub{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
     .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
     .btn{
@@ -165,12 +164,10 @@
     }
     .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;}
     .divider{height:1px; background:var(--line); margin:12px 0;}
-
-    .foot{
-      margin-top:14px; font-size:12px; color:var(--muted);
-      padding:14px 16px; border:1px solid var(--line);
-      border-radius:var(--radius); background:rgba(255,255,255,.65);
-    }
+    .imgwrap{display:grid; gap:10px;}
+    @media (min-width:960px){ .imgwrap{grid-template-columns: 1fr 1fr;} }
+    .imgbox{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#fff}
+    .imgbox img{display:block; width:100%; height:auto}
   </style>
 </head>
 
@@ -180,37 +177,36 @@
       <div class="brand">
         <div class="logoBox">E&</div>
         <div class="brandText">
-          <div class="name">(주)이앤인스트루먼트</div>
-          <div class="sub">www.einstrument.co.kr · Unit Conversion Toolkit</div>
+          <div class="name">이앤인스트루먼트</div>
+          <div class="sub">단위환산 및 유량 계산 도구</div>
         </div>
       </div>
       <div class="actions">
         <button class="btn primary" type="button" id="btnReset">기본값 복원</button>
-        <button class="btn" type="button" id="btnCopyLink">페이지 링크 복사</button>
+        <button class="btn" type="button" id="btnCopyLink">링크 복사</button>
       </div>
     </div>
 
     <div class="hero">
-      <h1>단위환산 계산기</h1>
+      <h1>가스 먼지 농도 유량 단위환산 계산기</h1>
       <p class="lead">
-        구성 순서:
-        1) 질량농도환산 → 2) DustTrack 팩터 → 3) 가스농도(vol%/ppm/mg/m³) →
-        4) 유량 단위환산 → 5) Actual↔Normal(P,T) + 유량계산(Q=A×V, ṁ=ρ×Q)
+        1 질량농도 → 2 DustTrack 중량 팩터 → 3 가스농도(표준조건 운전조건, 압력단위 자동환산) →
+        4 유량 단위 → 5 유량 보정 및 ENVEA 계산
       </p>
       <div class="chips">
-        <div class="chip">1. 질량농도</div>
-        <div class="chip">2. DustTrack Factor</div>
-        <div class="chip">3. Gas: vol% / ppm / mg/m³</div>
-        <div class="chip">4. Flow Units</div>
-        <div class="chip">5. Actual↔Normal + Q=A×V</div>
+        <div class="chip">질량농도</div>
+        <div class="chip">DustTrack</div>
+        <div class="chip">가스농도</div>
+        <div class="chip">유량단위</div>
+        <div class="chip">ENVEA 계산</div>
       </div>
     </div>
 
     <div class="grid">
 
-      <!-- 1) Mass concentration -->
+      <!-- 1) 질량농도 -->
       <div class="card">
-        <h2>1. 질량농도 환산 <span class="badge">mg/m³ ↔ g/m³ ↔ µg/m³</span></h2>
+        <h2>1 질량농도 환산 <span class="badge">mg m3 g m3 ug m3</span></h2>
         <div class="row cols2">
           <div>
             <label>입력값</label>
@@ -219,138 +215,188 @@
           <div>
             <label>입력 단위</label>
             <select id="m_unit">
-              <option value="ug">µg/m³</option>
-              <option value="mg" selected>mg/m³</option>
-              <option value="g">g/m³</option>
+              <option value="ug">ug m3</option>
+              <option value="mg" selected>mg m3</option>
+              <option value="g">g m3</option>
             </select>
           </div>
         </div>
         <div class="row cols3" style="margin-top:10px">
           <div>
-            <label>결과 (µg/m³)</label>
+            <label>결과 ug m3</label>
             <div class="out" id="m_out_ug">-</div>
           </div>
           <div>
-            <label>결과 (mg/m³)</label>
+            <label>결과 mg m3</label>
             <div class="out" id="m_out_mg">-</div>
           </div>
           <div>
-            <label>결과 (g/m³)</label>
+            <label>결과 g m3</label>
             <div class="out" id="m_out_g">-</div>
           </div>
         </div>
-        <div class="hint">빠른 확인: 1 g/m³ = 1000 mg/m³ = 1,000,000 µg/m³</div>
+        <div class="hint">1 g m3 는 1000 mg m3 와 같습니다</div>
       </div>
 
-      <!-- 2) DustTrack Weight Factor Calculator -->
+      <!-- 2) DustTrack -->
       <div class="card span2">
-        <h2>2. DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
-        <div class="hint">
-          필터 전/후 무게와 유량/시간으로 기준 농도를 계산하고, DustTrack 평균값 대비 보정 팩터(New Cal Factor)를 산출합니다.
-        </div>
-
-        <div class="divider"></div>
-
+        <h2>2 DustTrack 중량 팩터 계산기 <span class="badge">엑셀 수식 동일</span></h2>
         <div class="row cols4">
           <div>
-            <label>Filter Pre Weight (mg)</label>
+            <label>필터 전 무게 mg</label>
             <input id="d_pre" type="number" step="any" value="74.022">
           </div>
           <div>
-            <label>Filter Post Weight (mg)</label>
+            <label>필터 후 무게 mg</label>
             <input id="d_post" type="number" step="any" value="89.195">
           </div>
           <div>
-            <label>DustTrack Flow Rate (L/min)</label>
+            <label>샘플 유량 L min</label>
             <input id="d_flow_lmin" type="number" step="any" value="1">
           </div>
           <div>
-            <label>Total Sample Time (min)</label>
+            <label>샘플 시간 min</label>
             <input id="d_time_min" type="number" step="any" value="1305">
           </div>
         </div>
 
         <div class="row cols3" style="margin-top:10px">
           <div>
-            <label>Avg. DustTrack Concentration (mg/m³)</label>
+            <label>DustTrack 평균 농도 mg m3</label>
             <input id="d_dt_avg" type="number" step="any" value="12.6">
           </div>
           <div>
-            <label>Current Cal Factor Set</label>
+            <label>현재 보정 팩터</label>
             <input id="d_cur_factor" type="number" step="any" value="1">
           </div>
           <div>
-            <label>결과(New Cal Factor)</label>
+            <label>새 보정 팩터</label>
             <div class="out big" id="d_new_factor">-</div>
           </div>
         </div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>Weight Gain (mg)</label>
+            <label>무게 증가량 mg</label>
             <div class="out" id="d_gain_mg">-</div>
           </div>
           <div>
-            <label>Flow (m³/min)</label>
+            <label>유량 m3 min</label>
             <div class="out" id="d_flow_m3min">-</div>
           </div>
           <div>
-            <label>Total Volume (m³)</label>
+            <label>총 부피 m3</label>
             <div class="out" id="d_total_m3">-</div>
           </div>
           <div>
-            <label>Sample Ref. Conc (mg/m³)</label>
+            <label>기준 농도 mg m3</label>
             <div class="out" id="d_ref_mgm3">-</div>
           </div>
         </div>
-
         <div class="warn" id="d_warn"></div>
-
-        <div class="hint mono" style="margin-top:10px">
-          Ref(mg/m³)= (Post−Pre) / ((Flow L/min ÷ 1000) × Time min) ·
-          NewFactor = (Ref / DustTrackAvg) × CurrentFactor
-        </div>
       </div>
 
-      <!-- 3) Gas conversion: Volume %, mg/m3, ppm -->
+      <!-- 3) 가스농도 + 표준조건/운전조건 + 압력단위환산 -->
       <div class="card">
-        <h2>3. 가스 농도 환산 <span class="badge">vol% / ppm / mg/m³</span></h2>
+        <h2>3 가스 농도 환산 <span class="badge">ppm 부피퍼센트 mg m3</span></h2>
         <div class="hint">
-          가스 선택 → 분자량 자동 입력. 입력 단위를 선택하면 ppm/vol%/mg/m³가 동시에 계산됩니다.
+          ppm 과 부피퍼센트는 조건과 무관합니다 mg m3 변환은 온도 압력 조건에 따라 바뀝니다
         </div>
 
         <div class="row cols3" style="margin-top:10px">
           <div>
             <label>가스 선택</label>
             <select id="g_gas">
-              <option value="SO2" selected>SO₂</option>
-              <option value="NO2">NO₂</option>
+              <option value="SO2" selected>SO2</option>
+              <option value="NO2">NO2</option>
               <option value="NO">NO</option>
               <option value="CO">CO</option>
-              <option value="CO2">CO₂</option>
-              <option value="O2">O₂</option>
-              <option value="NH3">NH₃</option>
-              <option value="H2S">H₂S</option>
-              <option value="CH4">CH₄</option>
+              <option value="CO2">CO2</option>
+              <option value="O2">O2</option>
+              <option value="NH3">NH3</option>
+              <option value="H2S">H2S</option>
+              <option value="CH4">CH4</option>
               <option value="custom">직접입력</option>
             </select>
           </div>
           <div>
-            <label>분자량 MW (g/mol)</label>
+            <label>분자량 MW g mol</label>
             <input id="g_mw" type="number" step="any" value="64.066" />
-            <div class="hint">“직접입력” 선택 시 수정 가능</div>
+            <div class="hint">직접입력 선택 시 수정 가능</div>
           </div>
           <div>
-            <label>기준조건(표준) 선택</label>
-            <select id="g_stp">
-              <option value="0C" selected>0℃, 1atm (Nm³)</option>
-              <option value="20C">20℃, 1atm</option>
-              <option value="25C">25℃, 1atm</option>
+            <label>적용 조건 선택</label>
+            <select id="g_condMode">
+              <option value="ref" selected>표준조건 사용</option>
+              <option value="act">운전조건 사용</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row cols3">
+          <div>
+            <label>표준 온도 도</label>
+            <select id="g_Tref">
+              <option value="0" selected>0 도</option>
+              <option value="20">20 도</option>
+              <option value="25">25 도</option>
+            </select>
+          </div>
+          <div>
+            <label>표준 압력</label>
+            <input id="g_Pref" type="number" step="any" value="1">
+          </div>
+          <div>
+            <label>표준 압력 단위</label>
+            <select id="g_Punit">
+              <option value="atm" selected>atm</option>
+              <option value="bar">bar</option>
+              <option value="mbar">mbar</option>
+              <option value="kPa">kPa</option>
+              <option value="Pa">Pa</option>
+              <option value="mmHg">mmHg</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>운전 온도 도</label>
+            <input id="g_Tact" type="number" step="any" value="120">
+          </div>
+          <div>
+            <label>운전 압력</label>
+            <input id="g_Pact" type="number" step="any" value="101.325">
+          </div>
+          <div>
+            <label>운전 압력 단위</label>
+            <select id="g_PactUnit">
+              <option value="kPa" selected>kPa</option>
+              <option value="Pa">Pa</option>
+              <option value="bar">bar</option>
+              <option value="mbar">mbar</option>
+              <option value="atm">atm</option>
+              <option value="mmHg">mmHg</option>
             </select>
           </div>
         </div>
 
         <div class="row cols2" style="margin-top:10px">
+          <div>
+            <label>현재 적용 압력 환산</label>
+            <div class="out" id="g_Pout">-</div>
+          </div>
+          <div>
+            <label>현재 적용 조건</label>
+            <div class="out" id="g_condOut">-</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="row cols2">
           <div>
             <label>입력값</label>
             <input id="g_val" type="number" step="any" value="100" />
@@ -359,23 +405,23 @@
             <label>입력 단위</label>
             <select id="g_unit">
               <option value="ppm" selected>ppm</option>
-              <option value="volpct">Volume %</option>
-              <option value="mgm3">mg/m³ (표준조건 기준)</option>
+              <option value="volpct">부피퍼센트</option>
+              <option value="mgm3">mg m3</option>
             </select>
           </div>
         </div>
 
         <div class="row cols3" style="margin-top:10px">
           <div>
-            <label>결과 (ppm)</label>
+            <label>결과 ppm</label>
             <div class="out" id="g_out_ppm">-</div>
           </div>
           <div>
-            <label>결과 (Volume %)</label>
+            <label>결과 부피퍼센트</label>
             <div class="out" id="g_out_volpct">-</div>
           </div>
           <div>
-            <label>결과 (mg/m³)</label>
+            <label>결과 mg m3</label>
             <div class="out" id="g_out_mgm3">-</div>
           </div>
         </div>
@@ -383,13 +429,15 @@
         <div class="warn" id="g_warn"></div>
 
         <div class="hint mono" style="margin-top:10px">
-          vol% = ppm / 10,000 · mg/m³ = ppm × MW / Vm (Vm: 몰부피 L/mol, 선택한 표준조건 기준)
+          mg m3 = ppm * MW * P(Pa) / (R * T(K)) * 1e-3
+          ppm = mg m3 * (R * T(K)) / (MW * P(Pa)) * 1e3
+          부피퍼센트 = ppm / 10000
         </div>
       </div>
 
-      <!-- 4) Flow unit conversion -->
+      <!-- 4) 유량 단위 -->
       <div class="card">
-        <h2>4. 유량 단위 환산 <span class="badge">m³/h ↔ L/min ↔ Nm³/h ↔ NL/min</span></h2>
+        <h2>4 유량 단위 환산 <span class="badge">m3 h L min Nm3 h NL min</span></h2>
         <div class="row cols2">
           <div>
             <label>입력값</label>
@@ -398,72 +446,70 @@
           <div>
             <label>입력 단위</label>
             <select id="f_unit">
-              <option value="m3h" selected>m³/h</option>
-              <option value="lmin">L/min</option>
-              <option value="nm3h">Nm³/h</option>
-              <option value="nlmin">NL/min</option>
+              <option value="m3h" selected>m3 h</option>
+              <option value="lmin">L min</option>
+              <option value="nm3h">Nm3 h</option>
+              <option value="nlmin">NL min</option>
             </select>
           </div>
         </div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>결과 (m³/h)</label>
+            <label>결과 m3 h</label>
             <div class="out" id="f_out_m3h">-</div>
           </div>
           <div>
-            <label>결과 (L/min)</label>
+            <label>결과 L min</label>
             <div class="out" id="f_out_lmin">-</div>
           </div>
           <div>
-            <label>결과 (Nm³/h)</label>
+            <label>결과 Nm3 h</label>
             <div class="out" id="f_out_nm3h">-</div>
           </div>
           <div>
-            <label>결과 (NL/min)</label>
+            <label>결과 NL min</label>
             <div class="out" id="f_out_nlmin">-</div>
           </div>
         </div>
 
-        <div class="hint">
-          이 카드의 Nm³ 표시는 “단위 스케일” 환산입니다. 실제 운전조건(P,T) 보정은 5번에서 계산하세요.
-        </div>
+        <div class="hint">여기 Nm3 표시는 단위 스케일 환산입니다 실제 운전조건 보정은 5번에서 계산하세요</div>
       </div>
 
-      <!-- 5) Actual <-> Normal with P,T + Flow calc (A×V×rho) -->
+      <!-- 5) 유량 보정 및 ENVEA 계산 (이전과 동일) -->
       <div class="card span2">
-        <h2>5. Actual ↔ Normal 환산 (운전조건 P,T) <span class="badge">m³/h ↔ Nm³/h</span></h2>
+        <h2>5 유량 보정 및 ENVEA 계산 <span class="badge">엑셀 로직 동일</span></h2>
 
-        <div class="row cols4">
+        <!-- 5-1 Actual Normal -->
+        <div class="hint">Actual은 운전조건 유량 Normal은 기준조건 보정 유량입니다</div>
+        <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>입력값</label>
+            <label>입력 유량</label>
             <input id="pt_in" type="number" step="any" value="1000">
           </div>
           <div>
-            <label>입력 종류</label>
+            <label>변환 방향</label>
             <select id="pt_mode">
-              <option value="A2N" selected>Actual m³/h → Normal Nm³/h</option>
-              <option value="N2A">Normal Nm³/h → Actual m³/h</option>
+              <option value="A2N" selected>Actual m3 h → Normal Nm3 h</option>
+              <option value="N2A">Normal Nm3 h → Actual m3 h</option>
             </select>
           </div>
           <div>
-            <label>운전 온도 Ta (℃)</label>
+            <label>운전 온도 Ta 도</label>
             <input id="pt_Ta" type="number" step="any" value="120">
           </div>
           <div>
-            <label>운전 압력 Pa (kPa, absolute)</label>
+            <label>운전 압력 Pa kPa 절대압</label>
             <input id="pt_Pa" type="number" step="any" value="101.325">
-            <div class="hint">게이지압이면 절대압으로 변환(예: +101.325)</div>
           </div>
         </div>
-
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>기준 온도 Tn (℃)</label>
+            <label>기준 온도 Tn 도</label>
             <input id="pt_Tn" type="number" step="any" value="0">
           </div>
           <div>
-            <label>기준 압력 Pn (kPa, abs)</label>
+            <label>기준 압력 Pn kPa 절대압</label>
             <input id="pt_Pn" type="number" step="any" value="101.325">
           </div>
           <div>
@@ -471,58 +517,52 @@
             <div class="out" id="pt_out">-</div>
           </div>
           <div>
-            <label>사용 공식</label>
+            <label>계산식</label>
             <div class="out mono" id="pt_formula">-</div>
           </div>
         </div>
 
-        <div class="hint">
-          이상기체 기반: <span class="mono">Qn = Qa × (Pa/Pn) × (TnK/TaK)</span> (K=℃+273.15)
-        </div>
-
         <div class="divider"></div>
 
-        <h3 style="margin:0 0 8px;font-size:14px;">유량 계산 <span class="badge">Q = A×V,  ṁ = ρ×Q</span></h3>
-        <div class="hint">관/덕트 단면적(A)과 평균 유속(V)로 체적유량(Q)을 계산하고, 밀도(ρ)로 질량유량(ṁ)을 계산합니다.</div>
-
+        <!-- 5-2 Q=A×V, m=ρ×Q -->
+        <h3 style="margin:0 0 8px;font-size:14px;">유량 계산 단면적 유속 밀도</h3>
         <div class="row cols4" style="margin-top:10px">
           <div>
             <label>형상</label>
             <select id="fc_shape">
-              <option value="circular" selected>원형(지름 D)</option>
-              <option value="rect">사각(W×H)</option>
+              <option value="circular" selected>원형 지름 D</option>
+              <option value="rect">사각 폭 W 높이 H</option>
             </select>
           </div>
           <div>
-            <label>지름 D (mm)</label>
+            <label>지름 D mm</label>
             <input id="fc_D_mm" type="number" step="any" value="100">
           </div>
           <div>
-            <label>폭 W (mm)</label>
+            <label>폭 W mm</label>
             <input id="fc_W_mm" type="number" step="any" value="200" disabled>
           </div>
           <div>
-            <label>높이 H (mm)</label>
+            <label>높이 H mm</label>
             <input id="fc_H_mm" type="number" step="any" value="200" disabled>
           </div>
         </div>
 
         <div class="row cols4" style="margin-top:10px">
           <div>
-            <label>평균 유속 V (m/s)</label>
+            <label>유속 V m s</label>
             <input id="fc_V_ms" type="number" step="any" value="10">
           </div>
           <div>
-            <label>밀도 ρ (kg/m³)</label>
+            <label>밀도 rho kg m3</label>
             <input id="fc_rho" type="number" step="any" value="1.204">
-            <div class="hint">공기(20℃)≈1.204</div>
           </div>
           <div>
             <label>체적유량 Q</label>
             <div class="out" id="fc_Q_out">-</div>
           </div>
           <div>
-            <label>질량유량 ṁ</label>
+            <label>질량유량</label>
             <div class="out" id="fc_mdot_out">-</div>
           </div>
         </div>
@@ -533,24 +573,145 @@
             <div class="out mono" id="fc_A_out">-</div>
           </div>
           <div>
-            <label>공식</label>
+            <label>계산식</label>
             <div class="out mono" id="fc_formula_out">-</div>
           </div>
         </div>
 
         <div class="warn" id="fc_warn"></div>
-      </div>
 
-      <div class="foot span2">
-        <b>(주)이앤인스트루먼트</b> · 환경/산업공정 계측 최적화 솔루션<br/>
-        블로그/기술자료에 적용 시 버튼 문구 예: “단위환산 계산기(가스/유량/먼지) 바로가기”
+        <div class="divider"></div>
+
+        <!-- 5-3 ENVEA 계산 (이전과 동일 UI/JS) -->
+        <h3 style="margin:0 0 8px;font-size:14px;">ENVEA 계산 시트 농도 계산 MaxxFlow SolidFlow PicoFlow</h3>
+        <div class="hint">엑셀 Calculation of parameters 시트 수식을 그대로 적용합니다</div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>벌크밀도 kg m3</label>
+            <input id="en_bulk" type="number" step="any" value="1200">
+          </div>
+          <div>
+            <label>파이프 직경 mm</label>
+            <input id="en_D_mm" type="number" step="any" value="200">
+          </div>
+          <div>
+            <label>이송량 kg h</label>
+            <input id="en_mdot_kgh" type="number" step="any" value="200000">
+          </div>
+          <div>
+            <label>계산 모드</label>
+            <select id="en_mode">
+              <option value="freefall" selected>MaxxFlow 자유낙하</option>
+              <option value="pneumatic">SolidFlow PicoFlow 공압이송</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>낙하 높이 mm</label>
+            <input id="en_fall_mm" type="number" step="any" value="500">
+          </div>
+          <div>
+            <label>공압이송 유속 m s</label>
+            <input id="en_vel_ms" type="number" step="any" value="14.2" disabled>
+          </div>
+          <div>
+            <label>공기유량 Nm3 h</label>
+            <input id="en_air_Nm3h" type="number" step="any" value="30000" disabled>
+          </div>
+          <div>
+            <label>공기 압력 bar</label>
+            <input id="en_air_bar" type="number" step="any" value="1.013" disabled>
+          </div>
+        </div>
+
+        <div class="row cols4" style="margin-top:10px">
+          <div>
+            <label>공기 온도 도</label>
+            <input id="en_air_Tc" type="number" step="any" value="15" disabled>
+          </div>
+          <div>
+            <label>공압 유속 계산 방식</label>
+            <select id="en_vel_mode" disabled>
+              <option value="direct" selected>유속 직접 입력</option>
+              <option value="from_air">공기유량으로 유속 계산</option>
+            </select>
+          </div>
+          <div>
+            <label>계산된 유속 m s</label>
+            <div class="out" id="en_vel_out">-</div>
+          </div>
+          <div>
+            <label>계산된 공기유량 m3 h</label>
+            <div class="out" id="en_air_m3h">-</div>
+          </div>
+        </div>
+
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>농도 g m3</label>
+            <div class="out big" id="en_conc_gm3">-</div>
+          </div>
+          <div>
+            <label>농도 kg m3</label>
+            <div class="out" id="en_conc_kgm3">-</div>
+          </div>
+          <div>
+            <label>농도 퍼센트</label>
+            <div class="out" id="en_conc_pct">-</div>
+          </div>
+        </div>
+
+        <div class="warn" id="en_warn"></div>
+
+        <div class="divider"></div>
+
+        <!-- 5-4 Pipe reduction -->
+        <h3 style="margin:0 0 8px;font-size:14px;">Pipe reduction for MaxxFlow</h3>
+        <div class="row cols3" style="margin-top:10px">
+          <div>
+            <label>입구 직경 mm</label>
+            <input id="pr_inlet_mm" type="number" step="any" value="500">
+          </div>
+          <div>
+            <label>MaxxFlow 직경 mm</label>
+            <input id="pr_mx_mm" type="number" step="any" value="200">
+          </div>
+          <div>
+            <label>벽 각도 도</label>
+            <input id="pr_angle_deg" type="number" step="any" value="70">
+          </div>
+        </div>
+
+        <div class="row cols2" style="margin-top:10px">
+          <div>
+            <label>최소 높이 mm</label>
+            <div class="out big" id="pr_height_mm">-</div>
+          </div>
+          <div>
+            <label>비고</label>
+            <div class="out" id="pr_note">-</div>
+          </div>
+        </div>
+
+        <div class="imgwrap" style="margin-top:10px">
+          <div class="imgbox">
+            <img alt="Pipe reduction 도면" src="pipe_reduction_img1.png" />
+          </div>
+          <div class="imgbox">
+            <img alt="Pipe reduction 예시" src="pipe_reduction_img2.png" />
+          </div>
+        </div>
+
+        <div class="warn" id="pr_warn"></div>
       </div>
     </div>
   </div>
 
 <script>
 (() => {
-  // ---------- helpers ----------
   const $ = (id) => document.getElementById(id);
   const isNum = (x) => typeof x === "number" && isFinite(x);
   const num = (v) => {
@@ -567,23 +728,22 @@
     return x.toLocaleString(undefined, { maximumFractionDigits: d });
   };
 
-  // ---------- 1) Mass concentration ----------
+  // 1) 질량농도
   function recalcMass(){
     const v = num($("m_in").value);
     const u = $("m_unit").value;
-
     let mg;
     if (u === "ug") mg = v / 1000;
     else if (u === "mg") mg = v;
     else if (u === "g") mg = v * 1000;
     else mg = NaN;
 
-    $("m_out_ug").textContent = `${fmt(mg * 1000)} µg/m³`;
-    $("m_out_mg").textContent = `${fmt(mg)} mg/m³`;
-    $("m_out_g").textContent  = `${fmt(mg / 1000, 9)} g/m³`;
+    $("m_out_ug").textContent = `${fmt(mg * 1000)} ug m3`;
+    $("m_out_mg").textContent = `${fmt(mg)} mg m3`;
+    $("m_out_g").textContent  = `${fmt(mg / 1000, 9)} g m3`;
   }
 
-  // ---------- 2) DustTrack Weight Factor ----------
+  // 2) DustTrack
   function recalcDust(){
     const pre = num($("d_pre").value);
     const post = num($("d_post").value);
@@ -604,48 +764,54 @@
       return;
     }
     if (flowL <= 0 || timeMin <= 0){
-      warn.textContent = "Flow rate(L/min)과 Sample time(min)은 0보다 커야 합니다.";
+      warn.textContent = "유량과 시간은 0보다 커야 합니다";
       warn.style.display = "block";
       return;
     }
     if (dtAvg <= 0 || curFactor <= 0){
-      warn.textContent = "DustTrack Avg(mg/m³)와 Current Factor는 0보다 커야 합니다.";
+      warn.textContent = "평균농도와 현재팩터는 0보다 커야 합니다";
       warn.style.display = "block";
       return;
     }
 
-    const gain = post - pre;                 // mg
-    const flowM3Min = flowL / 1000.0;        // m3/min
-    const totalM3 = flowM3Min * timeMin;     // m3
+    const gain = post - pre;
+    const flowM3Min = flowL / 1000.0;
+    const totalM3 = flowM3Min * timeMin;
     if (totalM3 <= 0){
-      warn.textContent = "총 샘플링 부피(m³)가 0입니다. 유량/시간을 확인하세요.";
+      warn.textContent = "총 샘플 부피가 0입니다";
       warn.style.display = "block";
       return;
     }
 
-    const ref = gain / totalM3;              // mg/m3
+    const ref = gain / totalM3;
     const newFactor = (ref / dtAvg) * curFactor;
 
     $("d_gain_mg").textContent = `${fmt(gain)} mg`;
-    $("d_flow_m3min").textContent = `${fmt(flowM3Min, 9)} m³/min`;
-    $("d_total_m3").textContent = `${fmt(totalM3)} m³`;
-    $("d_ref_mgm3").textContent = `${fmt(ref)} mg/m³`;
+    $("d_flow_m3min").textContent = `${fmt(flowM3Min, 9)} m3 min`;
+    $("d_total_m3").textContent = `${fmt(totalM3)} m3`;
+    $("d_ref_mgm3").textContent = `${fmt(ref)} mg m3`;
     $("d_new_factor").textContent = fmt(newFactor);
   }
 
-  // ---------- 3) Gas conversion: vol% / ppm / mg/m3 ----------
-  const MOLAR_VOL = { "0C": 22.414, "20C": 24.055, "25C": 24.465 }; // L/mol (approx)
+  // 3) 가스농도 + 조건 선택 + 압력단위환산
   const GAS_DB = {
-    SO2:{label:"SO₂", mw:64.066},
-    NO2:{label:"NO₂", mw:46.0055},
-    NO:{label:"NO", mw:30.006},
-    CO:{label:"CO", mw:28.01},
-    CO2:{label:"CO₂", mw:44.0095},
-    O2:{label:"O₂", mw:31.998},
-    NH3:{label:"NH₃", mw:17.031},
-    H2S:{label:"H₂S", mw:34.081},
-    CH4:{label:"CH₄", mw:16.043},
+    SO2:{mw:64.066}, NO2:{mw:46.0055}, NO:{mw:30.006}, CO:{mw:28.01},
+    CO2:{mw:44.0095}, O2:{mw:31.998}, NH3:{mw:17.031}, H2S:{mw:34.081}, CH4:{mw:16.043},
   };
+  const R = 8.314462618; // J/mol/K
+
+  function toPa(value, unit){
+    if (!isNum(value)) return NaN;
+    switch(unit){
+      case "Pa":   return value;
+      case "kPa":  return value * 1000.0;
+      case "bar":  return value * 100000.0;
+      case "mbar": return value * 100.0;
+      case "atm":  return value * 101325.0;
+      case "mmHg": return value * 133.322;
+      default:     return NaN;
+    }
+  }
 
   function setGasMW(){
     const pick = $("g_gas").value;
@@ -659,19 +825,42 @@
   }
 
   function recalcGas(){
-    const MW = num($("g_mw").value);
-    const stp = $("g_stp").value;
+    const MW = num($("g_mw").value); // g/mol
+    const mode = $("g_condMode").value;
+
+    // 표준 조건
+    const TrefC = num($("g_Tref").value);
+    const PrefV = num($("g_Pref").value);
+    const PrefUnit = $("g_Punit").value;
+
+    // 운전 조건
+    const TactC = num($("g_Tact").value);
+    const PactV = num($("g_Pact").value);
+    const PactUnit = $("g_PactUnit").value;
+
+    // 적용 조건 결정
+    const Tc = (mode === "act") ? TactC : TrefC;
+    const PPa = (mode === "act") ? toPa(PactV, PactUnit) : toPa(PrefV, PrefUnit);
+
+    $("g_Pout").textContent = isNum(PPa) ? `${fmt(PPa)} Pa  |  ${fmt(PPa/1000)} kPa` : "-";
+    $("g_condOut").textContent = (isNum(Tc) && isNum(PPa)) ? `${fmt(Tc)} 도  ${fmt(PPa/1000)} kPa 기준` : "-";
+
     const unit = $("g_unit").value;
     const v = num($("g_val").value);
     const warn = $("g_warn");
     warn.style.display = "none";
 
     if (!isNum(MW) || MW <= 0){
-      warn.textContent = "분자량(MW)을 0보다 큰 값으로 입력하세요.";
+      warn.textContent = "분자량을 0보다 크게 입력하세요";
       warn.style.display = "block";
       $("g_out_ppm").textContent = "-";
       $("g_out_volpct").textContent = "-";
       $("g_out_mgm3").textContent = "-";
+      return;
+    }
+    if (!isNum(Tc) || !isNum(PPa) || PPa <= 0){
+      warn.textContent = "적용 조건의 온도 또는 압력이 올바르지 않습니다";
+      warn.style.display = "block";
       return;
     }
     if (!isNum(v)){
@@ -681,22 +870,24 @@
       return;
     }
 
-    const Vm = MOLAR_VOL[stp] ?? MOLAR_VOL["0C"]; // L/mol
+    const TK = Tc + 273.15;
+
+    // ppm ↔ mg/m3 (이상기체, 선택된 조건 적용)
     let ppm;
     if (unit === "ppm") ppm = v;
     else if (unit === "volpct") ppm = v * 10000.0;
-    else ppm = v * Vm / MW; // mg/m3 -> ppm
+    else ppm = v * (R * TK) / (MW * PPa) * 1000.0;
 
     const volpct = ppm / 10000.0;
-    const mgm3 = ppm * MW / Vm;
+    const mgm3 = ppm * MW * PPa / (R * TK) * 1e-3;
 
     $("g_out_ppm").textContent = `${fmt(ppm)} ppm`;
-    $("g_out_volpct").textContent = `${fmt(volpct, 9)} vol%`;
-    $("g_out_mgm3").textContent = `${fmt(mgm3)} mg/m³`;
+    $("g_out_volpct").textContent = `${fmt(volpct, 9)} %`;
+    $("g_out_mgm3").textContent = `${fmt(mgm3)} mg m3`;
   }
 
-  // ---------- 4) Flow unit conversion ----------
-  const K = 16.6666666667; // 1 m3/h = 16.6667 L/min
+  // 4) 유량 단위
+  const K = 16.6666666667;
   function recalcFlow(){
     const v = num($("f_in").value);
     const u = $("f_unit").value;
@@ -708,14 +899,13 @@
     else if (u === "nlmin") m3h = v / K;
 
     const lmin = m3h * K;
-
-    $("f_out_m3h").textContent  = `${fmt(m3h)} m³/h`;
-    $("f_out_lmin").textContent = `${fmt(lmin)} L/min`;
-    $("f_out_nm3h").textContent = `${fmt(m3h)} Nm³/h`;
-    $("f_out_nlmin").textContent= `${fmt(lmin)} NL/min`;
+    $("f_out_m3h").textContent  = `${fmt(m3h)} m3 h`;
+    $("f_out_lmin").textContent = `${fmt(lmin)} L min`;
+    $("f_out_nm3h").textContent = `${fmt(m3h)} Nm3 h`;
+    $("f_out_nlmin").textContent= `${fmt(lmin)} NL min`;
   }
 
-  // ---------- 5) Actual <-> Normal with P,T ----------
+  // 5-1) Actual ↔ Normal
   function recalcPT(){
     const Qin  = num($("pt_in").value);
     const mode = $("pt_mode").value;
@@ -729,38 +919,36 @@
 
     if (![Qin, TaK, Pa, TnK, Pn].every(isNum) || TaK <= 0 || TnK <= 0 || Pa <= 0 || Pn <= 0){
       $("pt_out").textContent = "-";
-      $("pt_formula").textContent = "Qn = Qa × (Pa/Pn) × (TnK/TaK)";
+      $("pt_formula").textContent = "Qn = Qa * (Pa/Pn) * (TnK/TaK)";
       return;
     }
 
     let out;
     if (mode === "A2N"){
       out = Qin * (Pa / Pn) * (TnK / TaK);
-      $("pt_out").textContent = `${fmt(out)} Nm³/h`;
-      $("pt_formula").textContent = `Qn = Qa × (${fmt(Pa,4)}/${fmt(Pn,4)}) × (${fmt(TnK,4)}/${fmt(TaK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} Nm3 h`;
+      $("pt_formula").textContent = `Qn = Qa * (${fmt(Pa,4)}/${fmt(Pn,4)}) * (${fmt(TnK,4)}/${fmt(TaK,4)})`;
     } else {
       out = Qin * (Pn / Pa) * (TaK / TnK);
-      $("pt_out").textContent = `${fmt(out)} m³/h`;
-      $("pt_formula").textContent = `Qa = Qn × (${fmt(Pn,4)}/${fmt(Pa,4)}) × (${fmt(TaK,4)}/${fmt(TnK,4)})`;
+      $("pt_out").textContent = `${fmt(out)} m3 h`;
+      $("pt_formula").textContent = `Qa = Qn * (${fmt(Pn,4)}/${fmt(Pa,4)}) * (${fmt(TaK,4)}/${fmt(TnK,4)})`;
     }
   }
 
-  // ---------- 5-추가) Flow calc by Area×Velocity (+ density) ----------
+  // 5-2) 유량 계산
   function fc_updateShapeUI(){
     const shape = $("fc_shape").value;
     const isCirc = (shape === "circular");
-
     $("fc_D_mm").disabled = !isCirc;
     $("fc_W_mm").disabled = isCirc;
     $("fc_H_mm").disabled = isCirc;
-
     recalcFlowCalc();
   }
 
   function recalcFlowCalc(){
     const shape = $("fc_shape").value;
-    const V = num($("fc_V_ms").value);     // m/s
-    const rho = num($("fc_rho").value);    // kg/m3
+    const V = num($("fc_V_ms").value);
+    const rho = num($("fc_rho").value);
 
     const warn = $("fc_warn");
     warn.style.display = "none";
@@ -773,29 +961,29 @@
       return;
     }
 
-    let A = NaN; // m2
+    let A = NaN;
     if (shape === "circular"){
       const Dmm = num($("fc_D_mm").value);
       if (!isNum(Dmm) || Dmm <= 0){
-        warn.textContent = "원형 선택 시 지름 D(mm)를 0보다 크게 입력하세요.";
+        warn.textContent = "지름 D를 0보다 크게 입력하세요";
         warn.style.display = "block";
         return;
       }
-      const D = Dmm / 1000.0; // m
+      const D = Dmm / 1000.0;
       A = Math.PI * (D*D) / 4.0;
-      $("fc_formula_out").textContent = `A=πD²/4,  Q=A×V,  ṁ=ρ×Q`;
+      $("fc_formula_out").textContent = "A = pi * D2 / 4  Q = A * V  질량유량 = rho * Q";
     } else {
       const Wmm = num($("fc_W_mm").value);
       const Hmm = num($("fc_H_mm").value);
       if (!isNum(Wmm) || !isNum(Hmm) || Wmm <= 0 || Hmm <= 0){
-        warn.textContent = "사각 선택 시 폭 W(mm), 높이 H(mm)를 0보다 크게 입력하세요.";
+        warn.textContent = "폭과 높이를 0보다 크게 입력하세요";
         warn.style.display = "block";
         return;
       }
       const W = Wmm / 1000.0;
       const H = Hmm / 1000.0;
       A = W * H;
-      $("fc_formula_out").textContent = `A=W×H,  Q=A×V,  ṁ=ρ×Q`;
+      $("fc_formula_out").textContent = "A = W * H  Q = A * V  질량유량 = rho * Q";
     }
 
     const Q_m3s = A * V;
@@ -803,47 +991,179 @@
     const mdot_kg_s = rho * Q_m3s;
     const mdot_kg_h = mdot_kg_s * 3600.0;
 
-    $("fc_A_out").textContent = `${fmt(A, 9)} m²`;
-    $("fc_Q_out").textContent = `${fmt(Q_m3s)} m³/s  |  ${fmt(Q_m3h)} m³/h`;
-    $("fc_mdot_out").textContent = `${fmt(mdot_kg_s)} kg/s  |  ${fmt(mdot_kg_h)} kg/h`;
+    $("fc_A_out").textContent = `${fmt(A, 9)} m2`;
+    $("fc_Q_out").textContent = `${fmt(Q_m3s)} m3 s  |  ${fmt(Q_m3h)} m3 h`;
+    $("fc_mdot_out").textContent = `${fmt(mdot_kg_s)} kg s  |  ${fmt(mdot_kg_h)} kg h`;
   }
 
-  // ---------- reset + copy link ----------
-  function resetAll(){
-    $("m_in").value = 100;
-    $("m_unit").value = "mg";
+  // 5-3 ENVEA 계산 (이전 로직 유지)
+  function en_updateModeUI(){
+    const mode = $("en_mode").value;
+    const isFree = (mode === "freefall");
+    const isPneu = (mode === "pneumatic");
 
-    $("d_pre").value = 74.022;
-    $("d_post").value = 89.195;
-    $("d_flow_lmin").value = 1;
-    $("d_time_min").value = 1305;
-    $("d_dt_avg").value = 12.6;
-    $("d_cur_factor").value = 1;
+    $("en_fall_mm").disabled = !isFree;
+
+    $("en_vel_mode").disabled = !isPneu;
+    const velMode = $("en_vel_mode").value;
+
+    $("en_vel_ms").disabled = !(isPneu && velMode === "direct");
+    $("en_air_Nm3h").disabled = !(isPneu && velMode === "from_air");
+    $("en_air_bar").disabled  = !(isPneu && velMode === "from_air");
+    $("en_air_Tc").disabled   = !(isPneu && velMode === "from_air");
+
+    recalcEN();
+  }
+
+  function recalcEN(){
+    const bulk = num($("en_bulk").value);
+    const Dmm = num($("en_D_mm").value);
+    const mdot_kgh = num($("en_mdot_kgh").value);
+    const mode = $("en_mode").value;
+    const velMode = $("en_vel_mode").value;
+
+    const warn = $("en_warn");
+    warn.style.display = "none";
+
+    if (![bulk, Dmm, mdot_kgh].every(isNum) || bulk <= 0 || Dmm <= 0 || mdot_kgh < 0){
+      $("en_vel_out").textContent = "-";
+      $("en_air_m3h").textContent = "-";
+      $("en_conc_gm3").textContent = "-";
+      $("en_conc_kgm3").textContent = "-";
+      $("en_conc_pct").textContent = "-";
+      return;
+    }
+
+    const D = Dmm / 1000.0;
+    const A = Math.PI * (D*D) / 4.0;
+
+    let vel = NaN;
+    let air_m3h = NaN;
+
+    if (mode === "freefall"){
+      const fallmm = num($("en_fall_mm").value);
+      if (!isNum(fallmm) || fallmm <= 0){
+        warn.textContent = "낙하 높이를 0보다 크게 입력하세요";
+        warn.style.display = "block";
+        return;
+      }
+      vel = Math.sqrt(2 * 9.80665 * (fallmm/1000.0));
+      air_m3h = A * vel * 3600.0;
+    } else {
+      if (velMode === "direct"){
+        vel = num($("en_vel_ms").value);
+        if (!isNum(vel) || vel <= 0){
+          warn.textContent = "공압이송 유속을 0보다 크게 입력하세요";
+          warn.style.display = "block";
+          return;
+        }
+        air_m3h = A * vel * 3600.0;
+      } else {
+        const Nm3h = num($("en_air_Nm3h").value);
+        const Pbar = num($("en_air_bar").value);
+        const Tc = num($("en_air_Tc").value);
+
+        if (![Nm3h, Pbar, Tc].every(isNum) || Nm3h <= 0 || Pbar <= 0){
+          warn.textContent = "공기유량 Nm3 h, 압력 bar 는 0보다 커야 합니다";
+          warn.style.display = "block";
+          return;
+        }
+
+        air_m3h = (Nm3h/3600.0) * 1.01325 * (Tc + 273.15) / Pbar / 288.15 * 3600.0;
+        vel = air_m3h / (A * 3600.0);
+      }
+    }
+
+    if (!isNum(vel) || vel <= 0 || !isNum(air_m3h) || air_m3h <= 0){
+      warn.textContent = "유속 또는 공기유량 계산이 올바르지 않습니다";
+      warn.style.display = "block";
+      return;
+    }
+
+    const conc_gm3 = mdot_kgh * 1000.0 / (A * vel * 3600.0);
+    const conc_kgm3 = conc_gm3 / 1000.0;
+
+    const frac = mdot_kgh / (A * vel * 3600.0 * bulk);
+    const pct = frac * 100.0;
+
+    $("en_vel_out").textContent = `${fmt(vel)} m s`;
+    $("en_air_m3h").textContent = `${fmt(air_m3h)} m3 h`;
+    $("en_conc_gm3").textContent = `${fmt(conc_gm3)} g m3`;
+    $("en_conc_kgm3").textContent = `${fmt(conc_kgm3, 9)} kg m3`;
+    $("en_conc_pct").textContent = `${fmt(pct, 9)} %`;
+  }
+
+  // 5-4 Pipe reduction
+  function recalcPipeReduction(){
+    const inlet = num($("pr_inlet_mm").value);
+    const mx = num($("pr_mx_mm").value);
+    const ang = num($("pr_angle_deg").value);
+
+    const warn = $("pr_warn");
+    warn.style.display = "none";
+
+    if (![inlet, mx, ang].every(isNum) || inlet <= 0 || mx <= 0){
+      $("pr_height_mm").textContent = "-";
+      $("pr_note").textContent = "-";
+      return;
+    }
+    if (inlet <= mx){
+      warn.textContent = "입구 직경은 MaxxFlow 직경보다 커야 합니다";
+      warn.style.display = "block";
+      $("pr_height_mm").textContent = "-";
+      $("pr_note").textContent = "입구 직경을 더 크게 설정하세요";
+      return;
+    }
+    const rad = ang / 180.0 * Math.PI;
+    const h = Math.round(0.5 * (inlet - mx) * Math.tan(rad));
+    $("pr_height_mm").textContent = `${fmt(h,0)} mm`;
+    $("pr_note").textContent = (ang < 60) ? "엑셀 참고: 최소 권장 각도는 60도" : "권장 범위";
+  }
+
+  function resetAll(){
+    $("m_in").value = 100; $("m_unit").value = "mg";
+
+    $("d_pre").value = 74.022; $("d_post").value = 89.195;
+    $("d_flow_lmin").value = 1; $("d_time_min").value = 1305;
+    $("d_dt_avg").value = 12.6; $("d_cur_factor").value = 1;
 
     $("g_gas").value = "SO2";
-    $("g_stp").value = "0C";
+    $("g_condMode").value = "ref";
+    $("g_Tref").value = "0";
+    $("g_Pref").value = 1;
+    $("g_Punit").value = "atm";
+    $("g_Tact").value = 120;
+    $("g_Pact").value = 101.325;
+    $("g_PactUnit").value = "kPa";
     $("g_unit").value = "ppm";
     $("g_val").value = 100;
 
-    $("f_in").value = 100;
-    $("f_unit").value = "m3h";
+    $("f_in").value = 100; $("f_unit").value = "m3h";
 
-    $("pt_in").value = 1000;
-    $("pt_mode").value = "A2N";
-    $("pt_Ta").value = 120;
-    $("pt_Pa").value = 101.325;
-    $("pt_Tn").value = 0;
-    $("pt_Pn").value = 101.325;
+    $("pt_in").value = 1000; $("pt_mode").value = "A2N";
+    $("pt_Ta").value = 120; $("pt_Pa").value = 101.325;
+    $("pt_Tn").value = 0; $("pt_Pn").value = 101.325;
 
     $("fc_shape").value = "circular";
-    $("fc_D_mm").value = 100;
-    $("fc_W_mm").value = 200;
-    $("fc_H_mm").value = 200;
-    $("fc_V_ms").value = 10;
-    $("fc_rho").value = 1.204;
+    $("fc_D_mm").value = 100; $("fc_W_mm").value = 200; $("fc_H_mm").value = 200;
+    $("fc_V_ms").value = 10; $("fc_rho").value = 1.204;
+
+    $("en_bulk").value = 1200; $("en_D_mm").value = 200; $("en_mdot_kgh").value = 200000;
+    $("en_mode").value = "freefall";
+    $("en_fall_mm").value = 500;
+    $("en_vel_mode").value = "direct";
+    $("en_vel_ms").value = 14.2;
+    $("en_air_Nm3h").value = 30000;
+    $("en_air_bar").value = 1.013;
+    $("en_air_Tc").value = 15;
+
+    $("pr_inlet_mm").value = 500;
+    $("pr_mx_mm").value = 200;
+    $("pr_angle_deg").value = 70;
 
     setGasMW();
     fc_updateShapeUI();
+    en_updateModeUI();
     recalcAll();
   }
 
@@ -851,9 +1171,9 @@
     const url = location.href;
     try{
       await navigator.clipboard.writeText(url);
-      alert("페이지 링크를 복사했습니다:\n" + url);
+      alert("링크를 복사했습니다\n" + url);
     }catch(e){
-      prompt("아래 링크를 복사하세요:", url);
+      prompt("아래 링크를 복사하세요", url);
     }
   }
 
@@ -864,9 +1184,10 @@
     recalcFlow();
     recalcPT();
     recalcFlowCalc();
+    recalcEN();
+    recalcPipeReduction();
   }
 
-  // ---------- events (즉시 반영) ----------
   ["input","change","keyup"].forEach(ev=>{
     $("m_in").addEventListener(ev, recalcMass);
     $("m_unit").addEventListener(ev, recalcMass);
@@ -881,7 +1202,13 @@
     $("g_val").addEventListener(ev, recalcGas);
     $("g_unit").addEventListener(ev, recalcGas);
     $("g_mw").addEventListener(ev, recalcGas);
-    $("g_stp").addEventListener(ev, recalcGas);
+    $("g_condMode").addEventListener(ev, recalcGas);
+    $("g_Tref").addEventListener(ev, recalcGas);
+    $("g_Pref").addEventListener(ev, recalcGas);
+    $("g_Punit").addEventListener(ev, recalcGas);
+    $("g_Tact").addEventListener(ev, recalcGas);
+    $("g_Pact").addEventListener(ev, recalcGas);
+    $("g_PactUnit").addEventListener(ev, recalcGas);
 
     $("f_in").addEventListener(ev, recalcFlow);
     $("f_unit").addEventListener(ev, recalcFlow);
@@ -898,17 +1225,32 @@
     $("fc_H_mm").addEventListener(ev, recalcFlowCalc);
     $("fc_V_ms").addEventListener(ev, recalcFlowCalc);
     $("fc_rho").addEventListener(ev, recalcFlowCalc);
+
+    $("en_bulk").addEventListener(ev, recalcEN);
+    $("en_D_mm").addEventListener(ev, recalcEN);
+    $("en_mdot_kgh").addEventListener(ev, recalcEN);
+    $("en_fall_mm").addEventListener(ev, recalcEN);
+    $("en_vel_ms").addEventListener(ev, recalcEN);
+    $("en_air_Nm3h").addEventListener(ev, recalcEN);
+    $("en_air_bar").addEventListener(ev, recalcEN);
+    $("en_air_Tc").addEventListener(ev, recalcEN);
+
+    $("pr_inlet_mm").addEventListener(ev, recalcPipeReduction);
+    $("pr_mx_mm").addEventListener(ev, recalcPipeReduction);
+    $("pr_angle_deg").addEventListener(ev, recalcPipeReduction);
   });
 
   $("g_gas").addEventListener("change", setGasMW);
   $("fc_shape").addEventListener("change", fc_updateShapeUI);
+  $("en_mode").addEventListener("change", en_updateModeUI);
+  $("en_vel_mode").addEventListener("change", en_updateModeUI);
 
   $("btnReset").addEventListener("click", resetAll);
   $("btnCopyLink").addEventListener("click", copyLink);
 
-  // ---------- init ----------
   setGasMW();
   fc_updateShapeUI();
+  en_updateModeUI();
   recalcAll();
 })();
 </script>
